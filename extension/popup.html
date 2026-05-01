@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  width: 320px;
+  background: #07070e;
+  color: #e4e4f4;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13px;
+}
+
+.header {
+  background: #0f0f1a;
+  border-bottom: 1px solid #252538;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-weight: 900;
+  font-size: 16px;
+  letter-spacing: -0.5px;
+}
+
+.logo em { color: #b5ff47; font-style: normal; }
+
+.plan-badge {
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(181,255,71,.12);
+  color: #b5ff47;
+  border: 1px solid rgba(181,255,71,.25);
+  padding: 3px 9px;
+  border-radius: 100px;
+}
+
+/* Login state */
+#state-login { padding: 20px 16px; }
+
+.login-title {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.login-sub { font-size: 12px; color: #6a6a8a; margin-bottom: 16px; }
+
+.input {
+  width: 100%;
+  background: #161622;
+  border: 1px solid #252538;
+  color: #e4e4f4;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 10px;
+  outline: none;
+}
+.input:focus { border-color: #b5ff47; }
+.input::placeholder { color: #6a6a8a; }
+
+.btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all .2s;
+}
+.btn-green { background: #b5ff47; color: #07070e; }
+.btn-green:hover { box-shadow: 0 4px 16px rgba(181,255,71,.4); }
+.btn-outline {
+  background: transparent;
+  border: 1px solid #252538;
+  color: #e4e4f4;
+  margin-top: 8px;
+}
+.btn-outline:hover { border-color: #b5ff47; color: #b5ff47; }
+
+.err { color: #ff5f7e; font-size: 12px; margin-top: 8px; display: none; }
+.err.show { display: block; }
+
+/* Main state */
+#state-main { padding: 0; }
+
+.user-row {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #252538;
+}
+
+.avatar {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #b5ff47, #47c8ff);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 13px; color: #07070e;
+  flex-shrink: 0;
+}
+
+.user-name { font-weight: 700; font-size: 13px; }
+.user-email { font-size: 11px; color: #6a6a8a; }
+
+.signout-btn {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid #252538;
+  color: #6a6a8a;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.signout-btn:hover { border-color: #ff5f7e; color: #ff5f7e; }
+
+/* Stats */
+.stats { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 1px solid #252538; }
+.stat { padding: 12px 10px; text-align: center; border-right: 1px solid #252538; }
+.stat:last-child { border: none; }
+.stat-num { font-size: 22px; font-weight: 900; color: #b5ff47; line-height: 1; }
+.stat-label { font-size: 10px; color: #6a6a8a; margin-top: 3px; }
+
+/* Progress bar */
+.prog-wrap { padding: 10px 16px; border-bottom: 1px solid #252538; }
+.prog-head { display: flex; justify-content: space-between; font-size: 11px; color: #6a6a8a; margin-bottom: 6px; }
+.prog-head b { color: #b5ff47; }
+.prog-track { height: 4px; background: #252538; border-radius: 100px; overflow: hidden; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, #b5ff47, #47c8ff); border-radius: 100px; transition: width .5s; width: 0%; }
+
+/* Status */
+.status-row {
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #252538;
+  font-size: 12px;
+}
+.status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.status-dot.running { background: #b5ff47; box-shadow: 0 0 6px #b5ff47; animation: blink 1.6s infinite; }
+.status-dot.paused { background: #ffc844; box-shadow: 0 0 6px #ffc844; }
+.status-dot.stopped, .status-dot.idle { background: #6a6a8a; }
+.status-dot.error { background: #ff5f7e; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:.2} }
+
+/* Log */
+.log-wrap { height: 100px; overflow-y: auto; background: #0f0f1a; padding: 8px 12px; border-bottom: 1px solid #252538; }
+.log-line { font-size: 11px; font-family: 'Consolas', monospace; padding: 2px 0; }
+.log-line.ok { color: #b5ff47; }
+.log-line.info { color: #47c8ff; }
+.log-line.warn { color: #ffc844; }
+.log-line.err { color: #ff5f7e; }
+
+/* Controls */
+.controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 12px 16px; }
+.ctrl-btn {
+  padding: 9px 6px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all .2s;
+  text-align: center;
+}
+.ctrl-btn:disabled { opacity: .4; cursor: not-allowed; }
+.ctrl-start { background: #b5ff47; color: #07070e; }
+.ctrl-start:hover:not(:disabled) { box-shadow: 0 4px 14px rgba(181,255,71,.4); }
+.ctrl-pause { background: transparent; border: 1px solid #252538; color: #e4e4f4; }
+.ctrl-pause:hover:not(:disabled) { border-color: #ffc844; color: #ffc844; }
+.ctrl-stop { background: transparent; border: 1px solid #252538; color: #e4e4f4; }
+.ctrl-stop:hover:not(:disabled) { border-color: #ff5f7e; color: #ff5f7e; }
+
+/* Footer */
+.footer {
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #252538;
+}
+.open-dashboard {
+  font-size: 11px;
+  color: #b5ff47;
+  cursor: pointer;
+  text-decoration: none;
+}
+.naukri-note { font-size: 10px; color: #6a6a8a; }
+
+/* Not-logged-into-naukri warning */
+.naukri-warn {
+  margin: 10px 16px;
+  background: rgba(255,200,68,.08);
+  border: 1px solid rgba(255,200,68,.25);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: #ffc844;
+  display: none;
+}
+.naukri-warn.show { display: block; }
+.naukri-warn a { color: #ffc844; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Apply<em>Pilot</em></div>
+  <div class="plan-badge" id="plan-badge">Free Plan</div>
+</div>
+
+<!-- LOGIN STATE -->
+<div id="state-login">
+  <div class="login-title">Connect your account</div>
+  <div class="login-sub">Login with your ApplyPilot email to start applying</div>
+  <input class="input" id="inp-email" type="email" placeholder="Email" />
+  <input class="input" id="inp-pass" type="password" placeholder="Password" />
+  <button class="btn btn-green" id="btn-login">Sign In →</button>
+  <div class="err" id="login-err"></div>
+  <button class="btn btn-outline" id="btn-register">No account? Register free →</button>
+</div>
+
+<!-- MAIN STATE -->
+<div id="state-main" style="display:none">
+  <div class="user-row">
+    <div class="avatar" id="av">M</div>
+    <div>
+      <div class="user-name" id="uname">User</div>
+      <div class="user-email" id="uemail">user@email.com</div>
+    </div>
+    <button class="signout-btn" id="btn-signout">Sign out</button>
+  </div>
+
+  <div class="naukri-warn" id="naukri-warn">
+    ⚠️ <a href="https://www.naukri.com/nlogin/login" target="_blank">Login to Naukri first</a> — the bot needs your Naukri session
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num" id="s-applied">0</div>
+      <div class="stat-label">Applied today</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="s-limit">20</div>
+      <div class="stat-label">Daily limit</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="s-total">0</div>
+      <div class="stat-label">All time</div>
+    </div>
+  </div>
+
+  <div class="prog-wrap">
+    <div class="prog-head">
+      <span id="prog-label">Ready to start</span>
+      <b id="prog-pct">0%</b>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+  </div>
+
+  <div class="status-row">
+    <div class="status-dot idle" id="status-dot"></div>
+    <span id="status-text">Bot is idle — click Start to begin</span>
+  </div>
+
+  <div class="log-wrap" id="log-wrap">
+    <div class="log-line info">Ready. Click Start Bot to begin.</div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn ctrl-start" id="btn-start">▶ Start</button>
+    <button class="ctrl-btn ctrl-pause" id="btn-pause" disabled>⏸ Pause</button>
+    <button class="ctrl-btn ctrl-stop" id="btn-stop" disabled>⏹ Stop</button>
+  </div>
+
+  <div class="footer">
+    <a class="open-dashboard" id="open-dash" href="#">📊 Open Dashboard</a>
+    <div class="naukri-note">Using your Chrome + IP</div>
+  </div>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>

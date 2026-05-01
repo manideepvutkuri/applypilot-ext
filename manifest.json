@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "ApplyPilot � Auto Job Applier",
+  "version": "1.0.0",
+  "description": "Automatically applies to jobs on Naukri based on your preferences.",
+
+  "permissions": [
+    "tabs",
+    "storage",
+    "activeTab",
+    "scripting",
+    "alarms"
+  ],
+
+  "host_permissions": [
+    "https://www.naukri.com/*",
+    "https://applypilot.in/*",
+    "http://localhost:3000/*"
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://www.naukri.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ApplyPilot"
+  }
+}

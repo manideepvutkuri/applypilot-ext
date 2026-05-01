@@ -1,0 +1,74 @@
+-- ============================================================
+-- ApplyPilot — Supabase Database Setup
+-- Run this in: supabase.com → your project → SQL Editor
+-- ============================================================
+
+-- USERS TABLE
+create table if not exists users (
+  user_id         text primary key,
+  name            text not null,
+  email           text unique not null,
+  password_hash   text not null,
+
+  -- Plan
+  plan            text default 'free',
+  daily_limit     int  default 20,
+  paid_at         timestamptz,
+
+  -- Naukri credentials
+  naukri_email    text,
+  naukri_pass     text,
+
+  -- Job preferences
+  job_titles      jsonb default '["QA Automation Engineer"]',
+  locations       jsonb default '["Hyderabad", "Remote"]',
+
+  -- Profile details
+  total_exp_years numeric default 2,
+  current_ctc     numeric default 6,
+  expected_ctc    numeric default 9,
+  notice_period   int     default 30,
+  work_mode       text    default 'any',
+  phone           text,
+  age             int     default 26,
+  gender          text    default 'male',
+  education       text    default 'btech',
+  relocate        text    default 'yes',
+  skills          text,
+  skill_exp       jsonb   default '{}',
+
+  created_at      timestamptz default now(),
+  updated_at      timestamptz default now()
+);
+
+-- APPLICATIONS TABLE
+create table if not exists applications (
+  id          text primary key,
+  user_id     text references users(user_id) on delete cascade,
+  job_title   text,
+  company     text,
+  location    text,
+  platform    text default 'Naukri',
+  url         text,
+  status      text default 'applied',
+  applied_at  timestamptz default now()
+);
+
+-- LOGS TABLE
+create table if not exists logs (
+  id          text primary key,
+  user_id     text references users(user_id) on delete cascade,
+  type        text default 'info',
+  text        text,
+  created_at  timestamptz default now()
+);
+
+-- INDEXES for fast queries
+create index if not exists idx_applications_user_id on applications(user_id);
+create index if not exists idx_applications_applied_at on applications(applied_at);
+create index if not exists idx_logs_user_id on logs(user_id);
+create index if not exists idx_logs_created_at on logs(created_at);
+
+-- Auto-clean old logs (keep only last 7 days)
+-- Run this as a scheduled job in Supabase
+-- delete from logs where created_at < now() - interval '7 days';
