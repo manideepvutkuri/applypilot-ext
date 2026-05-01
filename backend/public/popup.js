@@ -6,7 +6,7 @@ const API_BASE = 'applypilot-ext-production.up.railway.app';
 // For local testing:
 //  const API_BASE = 'applypilot-ext-production.up.railway.app';
 
-const WEBSITE = 'https://applypilot.in';
+const WEBSITE = 'applypilot-ext-production.up.railway.app';
 
 // ── DOM refs ──────────────────────────────────────────────────
 const stateLogin = document.getElementById('state-login');
