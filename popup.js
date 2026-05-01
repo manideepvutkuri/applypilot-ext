@@ -2,9 +2,9 @@
 // ApplyPilot Extension — Popup Script
 // ============================================================
 
-// const API_BASE = 'https://applypilot.railway.app/api';
+const API_BASE = 'applypilot-ext-production.up.railway.app';
 // For local testing:
- const API_BASE = 'http://localhost:3000/login';
+//  const API_BASE = 'http://localhost:3000/login';
 
 const WEBSITE = 'https://applypilot.in';
 
