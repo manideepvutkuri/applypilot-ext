@@ -89,7 +89,15 @@ inpPass.onkeydown = (e) => { if (e.key === 'Enter') btnLogin.click(); };
 
 // Register — open website
 //  btnReg.onclick = () => chrome.tabs.create({ url: `${WEBSITE}/#register` });
-btnReg.onclick = () => window.open(`${WEBSITE}/#register`, '_blank');
+// btnReg.onclick = () => window.open(`${WEBSITE}/#register`, '_blank');
+
+btnReg.onclick = () => {
+  if (typeof chrome !== "undefined" && chrome.tabs) {
+    chrome.tabs.create({ url: `${WEBSITE}/#register` });
+  } else {
+    window.location.href = `${WEBSITE}/#register`;
+  }
+};
 
 // Sign out
 btnSignout.onclick = async () => {
