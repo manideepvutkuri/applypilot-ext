@@ -87,6 +87,48 @@ btnLogin.onclick = async () => {
 // Enter key to login
 inpPass.onkeydown = (e) => { if (e.key === 'Enter') btnLogin.click(); };
 
+
+
+const API = "https://applypilot-ext-production.up.railway.app";
+
+document.getElementById("btn-register").onclick = async () => {
+  const name = document.getElementById("regName").value;
+  const email = document.getElementById("regEmail").value;
+  const password = document.getElementById("regPassword").value;
+
+  if (!name || !email || !password) {
+    alert("All fields required");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/api/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ name, email, password })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert("Registered successfully ✅");
+
+      // 🔥 IMPORTANT: auto login
+      localStorage.setItem("token", data.token);
+
+      // redirect to login/dashboard
+      window.location.href = "/";
+    } else {
+      alert(data.error);
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Server error");
+  }
+};
 // Register — open website
 //  btnReg.onclick = () => chrome.tabs.create({ url: `${WEBSITE}/#register` });
 // btnReg.onclick = () => window.open(`${WEBSITE}/#register`, '_blank');

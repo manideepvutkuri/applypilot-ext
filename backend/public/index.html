@@ -294,6 +294,19 @@ body {
   </div>
 </div>
 
-<script src="popup.js"></script>
+<script src="popup.js">
+  window.onload = () => {
+  const loginForm = document.getElementById("btn-login");
+  const registerForm = document.getElementById("btn-register");
+
+  if (window.location.hash === "#register") {
+    loginForm.style.display = "none";
+    registerForm.style.display = "block";
+  } else {
+    loginForm.style.display = "block";
+    registerForm.style.display = "none";
+  }
+};
+</script>
 </body>
 </html>
