@@ -326,24 +326,51 @@ body {
 </div>
 <script src="popup.js"></script>
 <script >
- function showRegister() {
-  document.getElementById("btn-login").style.display = "none";
-  document.getElementById("btn-register").style.display = "block";
-}
+ const API = "https://applypilot-ext-production.up.railway.app";
 
-function showLogin() {
-  document.getElementById("btn-login").style.display = "block";
-  document.getElementById("btn-register").style.display = "none";
-}
+// REGISTER BUTTON CLICK
+document.getElementById("registerBtn").addEventListener("click", async () => {
+  
+  const name = document.getElementById("regName").value;
+  const email = document.getElementById("regEmail").value;
+  const password = document.getElementById("regPassword").value;
 
-// 🔥 IMPORTANT: detect #register
-window.onload = () => {
-  if (window.location.hash === "#register") {
-    showRegister();
-  } else {
-    showLogin();
+  // validation
+  if (!name || !email || !password) {
+    alert("Please fill all fields");
+    return;
   }
-};
+
+  try {
+    const res = await fetch(`${API}/api/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ name, email, password })
+    });
+
+    const data = await res.json();
+
+    console.log("REGISTER RESPONSE:", data); // debug
+
+    if (data.success) {
+      alert("Registered successfully ✅");
+
+      // 🔥 store token (important)
+      localStorage.setItem("token", data.token);
+
+      // go to login/main
+      window.location.href = "/";
+    } else {
+      alert(data.error);
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Server error");
+  }
+});
 </script>
 </body>
 </html>
