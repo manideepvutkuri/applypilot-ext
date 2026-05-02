@@ -93,9 +93,9 @@ inpPass.onkeydown = (e) => { if (e.key === 'Enter') btnLogin.click(); };
 
 btnReg.onclick = () => {
   if (typeof chrome !== "undefined" && chrome.tabs) {
-    chrome.tabs.create({ url: `${WEBSITE}/#register` });
+    chrome.tabs.create({ url: "https://applypilot-ext-production.up.railway.app/#register" });
   } else {
-    window.location.href = `${WEBSITE}/#register`;
+    window.location.href = "https://applypilot-ext-production.up.railway.app/#register";
   }
 };
 
