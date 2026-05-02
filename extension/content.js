@@ -5,6 +5,7 @@
 // ============================================================
 
 // Prevent running multiple times
+console.log("🔥 content.js loaded");
 if (window.__applyPilotRunning) {
   // already injected
 } else {
