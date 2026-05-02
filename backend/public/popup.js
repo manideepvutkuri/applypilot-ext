@@ -88,8 +88,8 @@ btnLogin.onclick = async () => {
 inpPass.onkeydown = (e) => { if (e.key === 'Enter') btnLogin.click(); };
 
 // Register — open website
- btnReg.onclick = () => chrome.tabs.create({ url: `${WEBSITE}/#register` });
-//btnReg.onclick = () => window.open(`${WEBSITE}/#register`, '_blank');
+//  btnReg.onclick = () => chrome.tabs.create({ url: `${WEBSITE}/#register` });
+btnReg.onclick = () => window.open(`${WEBSITE}/#register`, '_blank');
 
 // Sign out
 btnSignout.onclick = async () => {
