@@ -6,7 +6,7 @@ const API_BASE = 'applypilot-ext-production.up.railway.app';
 // For local testing:
 //  const API_BASE = 'http://localhost:3000/login';
 
-const WEBSITE = 'https://applypilot.in';
+const WEBSITE = 'https://manideepvutkuri-applypilot-ext.vercel.app/';
 
 // ── DOM refs ──────────────────────────────────────────────────
 const stateLogin = document.getElementById('state-login');

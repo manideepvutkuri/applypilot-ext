@@ -6,7 +6,7 @@ const API_BASE = 'applypilot-ext-production.up.railway.app';
 // For local testing:
 //  const API_BASE = 'http://localhost:3000/login';
 
-const WEBSITE = 'https://applypilot.in';
+const WEBSITE = 'https://manideepvutkuri-applypilot-ext.vercel.app/';
 
 // ── DOM refs ──────────────────────────────────────────────────
 const stateLogin = document.getElementById('state-login');
@@ -88,8 +88,8 @@ btnLogin.onclick = async () => {
 inpPass.onkeydown = (e) => { if (e.key === 'Enter') btnLogin.click(); };
 
 // Register — open website
-// btnReg.onclick = () => chrome.tabs.create({ url: `${WEBSITE}/#register` });
-btnReg.onclick = () => window.open(`${WEBSITE}/#register`, '_blank');
+btnReg.onclick = () => chrome.tabs.create({ url: `${WEBSITE}/#register` });
+// btnReg.onclick = () => window.open(`${WEBSITE}/#register`, '_blank');
 
 // Sign out
 btnSignout.onclick = async () => {
