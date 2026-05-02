@@ -39,24 +39,22 @@ window.onload = async () => {
 
 
 
-// document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
 
-//   console.log("JS Loaded ✅");
+  console.log("JS Loaded ✅");
 
-//   const btn = document.getElementById("registerBtn");
+  const btn = document.getElementById("registerBtn");
 
-//   if (!btn) {
-//     console.error("❌ registerBtn NOT FOUND");
-//     return;
-//   }
+  if (!btn) {
+    console.error("❌ registerBtn NOT FOUND");
+    return;
+  }
 
-//   console.log("✅ Button found");
+  console.log("✅ Button found");
 
-//   btn.addEventListener("click", () => {
-//     alert("CLICK WORKING ✅");
-//   });
-
-// });
+  // btn.addEventListener("click", () => {
+  //   alert("CLICK WORKING ✅");
+  // });
 btn.addEventListener("click", async () => {
 
   const name = document.getElementById("regName").value;
@@ -81,6 +79,8 @@ btn.addEventListener("click", async () => {
 
   alert("DONE");
 });
+});
+
 // ── Login ─────────────────────────────────────────────────────
 btnLogin.onclick = async () => {
   const email = inpEmail.value.trim();
