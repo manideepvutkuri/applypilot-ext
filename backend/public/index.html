@@ -344,51 +344,7 @@ window.onload = () => {
     showLogin();
   }
 };
-const API = "https://applypilot-ext-production.up.railway.app";
 
-// REGISTER BUTTON CLICK
-document.getElementById("btn-register").addEventListener("click", async () => {
-  
-  const name = document.getElementById("regName").value;
-  const email = document.getElementById("regEmail").value;
-  const password = document.getElementById("regPassword").value;
-
-  // validation
-  if (!name || !email || !password) {
-    alert("Please fill all fields");
-    return;
-  }
-
-  try {
-    const res = await fetch(`${API}/api/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ name, email, password })
-    });
-
-    const data = await res.json();
-
-    console.log("REGISTER RESPONSE:", data); // debug
-
-    if (data.success) {
-      alert("Registered successfully ✅");
-
-      // 🔥 store token (important)
-      localStorage.setItem("token", data.token);
-
-      // go to login/main
-      window.location.href = "/";
-    } else {
-      alert(data.error);
-    }
-
-  } catch (err) {
-    console.error(err);
-    alert("Server error");
-  }
-});
 </script>
 </body>
 </html>
