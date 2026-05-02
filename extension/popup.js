@@ -152,7 +152,7 @@ async function loadStatus() {
   if (!stored.token) return;
 
   try {
-    const res  = await fetch(`${API_BASE}/status`, {
+    const res  = await fetch('https://applypilot-ext-production.up.railway.app/api/status', {
       headers: { Authorization: `Bearer ${stored.token}` }
     });
     const data = await res.json();
