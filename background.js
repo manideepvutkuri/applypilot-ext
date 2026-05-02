@@ -114,7 +114,7 @@ async function startBot() {
     };
 
     // 3. Check today's count from API
-    const statusRes = await fetch(`${API_BASE}/status`, {
+    const statusRes = await fetch('https://applypilot-ext-production.up.railway.app/api/status', {
       headers: { Authorization: `Bearer ${userConfig.token}` }
     });
     const statusData = await statusRes.json();
