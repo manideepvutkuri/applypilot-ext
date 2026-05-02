@@ -238,7 +238,7 @@ body {
 </div> --> 
 
 <!-- LOGIN STATE -->
-<div id="btn-login">
+<div id="loginForm">
   <div class="login-title">Connect your account</div>
   <div class="login-sub">Login with your ApplyPilot email</div>
 
@@ -253,7 +253,7 @@ body {
 </div>
 
 <!-- REGISTER FORM -->
-<div id="btn-register" style="display:none;">
+<!-- <div id="btn-register" style="display:none;">
   <h2>Register</h2>
 
   <input id="regName" placeholder="Name" />
@@ -264,6 +264,19 @@ body {
 
   <br><br>
 
+  <a onclick="showLogin()">Already have account? Login</a> -->
+<!-- </div> -->
+
+<div id="registerForm" style="display:none;">
+  <h2>Register</h2>
+
+  <input id="regName" placeholder="Name" />
+  <input id="regEmail" placeholder="Email" />
+  <input id="regPassword" type="password" placeholder="Password" />
+
+  <button type="button" id="registerBtn">Register</button>
+
+  <br><br>
   <a onclick="showLogin()">Already have account? Login</a>
 </div>
 <!-- MAIN STATE -->
@@ -327,71 +340,16 @@ body {
 <script src="popup.js"></script>
 <script >
  function showRegister() {
-  document.getElementById("btn-login").style.display = "none";
-  document.getElementById("btn-register").style.display = "block";
+  document.getElementById("loginForm").style.display = "none";
+  document.getElementById("registerForm").style.display = "block";
 }
 
 function showLogin() {
-  document.getElementById("btn-login").style.display = "block";
-  document.getElementById("btn-register").style.display = "none";
+  document.getElementById("loginForm").style.display = "block";
+  document.getElementById("registerForm").style.display = "none";
 }
 
-// 🔥 IMPORTANT: detect #register
-window.onload = () => {
-  if (window.location.hash === "#register") {
-    showRegister();
-  } else {
-    showLogin();
-  }
-};
-
 </script>
-<script>
-const API = "https://applypilot-ext-production.up.railway.app";
 
-// REGISTER BUTTON CLICK
-document.getElementById("registerBtn").addEventListener("click", async () => {
-  alert("Button clicked");
-  const name = document.getElementById("regName").value;
-  const email = document.getElementById("regEmail").value;
-  const password = document.getElementById("regPassword").value;
-
-  // validation
-  if (!name || !email || !password) {
-    alert("Please fill all fields");
-    return;
-  }
-
-  try {
-    const res = await fetch(`${API}/api/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ name, email, password })
-    });
-
-    const data = await res.json();
-
-    console.log("REGISTER RESPONSE:", data); // debug
-
-    if (data.success) {
-      alert("Registered successfully ✅");
-
-      // 🔥 store token (important)
-      localStorage.setItem("token", data.token);
-
-      // go to login/main
-      window.location.href = "/";
-    } else {
-      alert(data.error);
-    }
-
-  } catch (err) {
-    console.error(err);
-    alert("Server error");
-  }
-});
-</script>
 </body>
 </html>

@@ -36,6 +36,28 @@ window.onload = async () => {
   }
 };
 
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  console.log("JS Loaded ✅");
+
+  const btn = document.getElementById("registerBtn");
+
+  if (!btn) {
+    console.error("❌ registerBtn NOT FOUND");
+    return;
+  }
+
+  console.log("✅ Button found");
+
+  btn.addEventListener("click", () => {
+    alert("CLICK WORKING ✅");
+  });
+
+});
+
 // ── Login ─────────────────────────────────────────────────────
 btnLogin.onclick = async () => {
   const email = inpEmail.value.trim();
