@@ -39,25 +39,48 @@ window.onload = async () => {
 
 
 
-document.addEventListener("DOMContentLoaded", () => {
+// document.addEventListener("DOMContentLoaded", () => {
 
-  console.log("JS Loaded ✅");
+//   console.log("JS Loaded ✅");
 
-  const btn = document.getElementById("registerBtn");
+//   const btn = document.getElementById("registerBtn");
 
-  if (!btn) {
-    console.error("❌ registerBtn NOT FOUND");
+//   if (!btn) {
+//     console.error("❌ registerBtn NOT FOUND");
+//     return;
+//   }
+
+//   console.log("✅ Button found");
+
+//   btn.addEventListener("click", () => {
+//     alert("CLICK WORKING ✅");
+//   });
+
+// });
+btn.addEventListener("click", async () => {
+
+  const name = document.getElementById("regName").value;
+  const email = document.getElementById("regEmail").value;
+  const password = document.getElementById("regPassword").value;
+
+  if (!name || !email || !password) {
+    alert("Fill all fields");
     return;
   }
 
-  console.log("✅ Button found");
-
-  btn.addEventListener("click", () => {
-    alert("CLICK WORKING ✅");
+  const res = await fetch("https://applypilot-ext-production.up.railway.app/api/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ name, email, password })
   });
 
-});
+  const data = await res.json();
+  console.log(data);
 
+  alert("DONE");
+});
 // ── Login ─────────────────────────────────────────────────────
 btnLogin.onclick = async () => {
   const email = inpEmail.value.trim();
