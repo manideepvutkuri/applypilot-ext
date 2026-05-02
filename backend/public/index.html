@@ -218,7 +218,7 @@ body {
 </div>
 <a onclick="showRegister()">No account? Register free</a>
 <a onclick="showLogin()">Already have account? Login</a>
-<!-- LOGIN STATE -->
+<!-- LOGIN STATE
 <div id="state-login">
   <div class="login-title">Connect your account</div>
   <div class="login-sub">Login with your ApplyPilot email to start applying</div>
@@ -228,13 +228,43 @@ body {
   <div class="err" id="login-err"></div>
   <button class="btn btn-outline" id="btn-register">No account? Register free →</button>
 </div>
-<!-- REGISTER FORM -->
-<div id="btn-register" style="display:none;">
+ REGISTER FORM -->
+<!-- <div id="btn-register" style="display:none;">
   <h2>Register</h2>
   <input id="regName" placeholder="Name" />
   <input id="regEmail" placeholder="Email" />
   <input id="regPassword" type="password" placeholder="Password" />
   <button id="registerBtn">Register</button>
+</div> --> 
+
+<!-- LOGIN STATE -->
+<div id="loginForm">
+  <div class="login-title">Connect your account</div>
+  <div class="login-sub">Login with your ApplyPilot email</div>
+
+  <input class="input" id="inp-email" type="email" placeholder="Email" />
+  <input class="input" id="inp-pass" type="password" placeholder="Password" />
+
+  <button class="btn btn-green" id="btn-login">Sign In →</button>
+
+  <button class="btn btn-outline" onclick="showRegister()">
+    No account? Register free →
+  </button>
+</div>
+
+<!-- REGISTER FORM -->
+<div id="registerForm" style="display:none;">
+  <h2>Register</h2>
+
+  <input id="regName" placeholder="Name" />
+  <input id="regEmail" placeholder="Email" />
+  <input id="regPassword" type="password" placeholder="Password" />
+
+  <button id="registerBtn">Register</button>
+
+  <br><br>
+
+  <a onclick="showLogin()">Already have account? Login</a>
 </div>
 <!-- MAIN STATE -->
 <div id="state-main" style="display:none">
@@ -294,8 +324,8 @@ body {
     <div class="naukri-note">Using your Chrome + IP</div>
   </div>
 </div>
-
-<script src="popup.js">
+<script src="popup.js"></script>
+<script >
  function showRegister() {
   document.getElementById("btn-login").style.display = "none";
   document.getElementById("btn-register").style.display = "block";
