@@ -88,7 +88,7 @@ async function startBot() {
     if (!stored.token) return { error: 'Not logged in. Please login on applypilot.in first.' };
 
     // 2. Fetch fresh config from API
-    const res = await fetch(`${API_BASE}/me`, {
+    const res = await fetch('https://applypilot-ext-production.up.railway.app/me', {
       headers: { Authorization: `Bearer ${stored.token}` }
     });
     const data = await res.json();

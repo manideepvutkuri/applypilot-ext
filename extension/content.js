@@ -6,6 +6,18 @@
 
 // Prevent running multiple times
 console.log("🔥 content.js loaded");
+
+console.log("🔥 content.js loaded");
+
+// TEMP TEST — send NEXT_JOB after 5 seconds
+setTimeout(() => {
+  console.log("Sending NEXT_JOB");
+
+  chrome.runtime.sendMessage({
+    type: 'NEXT_JOB'
+  });
+
+}, 5000);
 if (window.__applyPilotRunning) {
   // already injected
 } else {
