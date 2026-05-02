@@ -295,16 +295,22 @@ body {
 </div>
 
 <script src="popup.js">
-  window.onload = () => {
-  const loginForm = document.getElementById("btn-login");
-  const registerForm = document.getElementById("btn-register");
+ function showRegister() {
+  document.getElementById("btn-login").style.display = "none";
+  document.getElementById("btn-register").style.display = "block";
+}
 
+function showLogin() {
+  document.getElementById("btn-login").style.display = "block";
+  document.getElementById("btn-register").style.display = "none";
+}
+
+// 🔥 IMPORTANT: detect #register
+window.onload = () => {
   if (window.location.hash === "#register") {
-    loginForm.style.display = "none";
-    registerForm.style.display = "block";
+    showRegister();
   } else {
-    loginForm.style.display = "block";
-    registerForm.style.display = "none";
+    showLogin();
   }
 };
 </script>
