@@ -237,7 +237,7 @@ async function handleJobApplied(jobData) {
 
   // Save to backend
   try {
-    await fetch(`${API_BASE}/application`, {
+    await fetch('https://applypilot-ext-production.up.railway.app/api/application', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -279,7 +279,7 @@ async function logToAPI(type, text) {
   console.log(`[${type}] ${text}`);
   if (!userConfig?.token) return;
   try {
-    await fetch(`${API_BASE}/log`, {
+    await fetch('https://applypilot-ext-production.up.railway.app/api/log', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
