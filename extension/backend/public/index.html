@@ -1,292 +1,1209 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ApplyPilot — Auto Job Application Bot</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body {
-  width: 320px;
-  background: #07070e;
-  color: #e4e4f4;
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 13px;
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#07070e;--s1:#0f0f1a;--s2:#161622;--s3:#1e1e2c;
+  --bd:#252538;--gr:#b5ff47;--sky:#47c8ff;--rose:#ff5f7e;
+  --gold:#ffc844;--pu:#a78bfa;--dim:#6060880;--txt:#e4e4f4;
+  --dim:#606080;--r:12px;
+  --fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:var(--fb);min-height:100vh;overflow-x:hidden}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(181,255,71,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(181,255,71,.018) 1px,transparent 1px);
+  background-size:48px 48px;
 }
 
-.header {
-  background: #0f0f1a;
-  border-bottom: 1px solid #252538;
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+/* ══════════════════════════════
+   PAGES
+══════════════════════════════ */
+.page{display:none;min-height:100vh;position:relative;z-index:1}
+.page.on{display:flex;flex-direction:column}
+
+/* ══════════════════════════════
+   LANDING
+══════════════════════════════ */
+#pg-land{align-items:center;justify-content:center;text-align:center;padding:60px 20px}
+
+.chip{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(181,255,71,.07);border:1px solid rgba(181,255,71,.2);
+  color:var(--gr);font-family:var(--fh);font-weight:700;font-size:11px;
+  letter-spacing:2.5px;text-transform:uppercase;padding:7px 18px;
+  border-radius:100px;margin-bottom:36px;animation:up .5s ease both;
+}
+.chip-dot{width:6px;height:6px;border-radius:50%;background:var(--gr);animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.1}}
+
+.lh{
+  font-family:var(--fh);font-weight:900;
+  font-size:clamp(40px,8vw,90px);line-height:.92;
+  letter-spacing:-3px;margin-bottom:24px;
+  animation:up .6s .08s ease both;
+}
+.lh em{color:var(--gr);font-style:normal;display:block}
+
+.lp{
+  font-size:17px;color:var(--dim);max-width:460px;
+  margin:0 auto 48px;line-height:1.7;
+  animation:up .6s .16s ease both;
+}
+.lp b{color:var(--txt);font-weight:400}
+
+.l-btns{
+  display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+  animation:up .6s .24s ease both;
 }
 
-.logo {
-  font-weight: 900;
-  font-size: 16px;
-  letter-spacing: -0.5px;
+.btn-gr{
+  background:var(--gr);color:var(--bg);font-family:var(--fh);
+  font-weight:800;font-size:14px;padding:14px 30px;
+  border-radius:100px;border:none;cursor:pointer;
+  box-shadow:0 0 44px rgba(181,255,71,.3);transition:all .2s;
+}
+.btn-gr:hover{transform:translateY(-2px);box-shadow:0 0 64px rgba(181,255,71,.5)}
+
+.btn-out{
+  background:transparent;color:var(--txt);font-family:var(--fh);
+  font-weight:700;font-size:14px;padding:14px 30px;
+  border-radius:100px;border:1px solid var(--bd);cursor:pointer;transition:all .2s;
+}
+.btn-out:hover{border-color:var(--gr);color:var(--gr)}
+
+.l-stats{
+  display:flex;gap:52px;justify-content:center;
+  margin-top:64px;flex-wrap:wrap;
+  animation:up .6s .32s ease both;
+}
+.ls .n{font-family:var(--fh);font-weight:900;font-size:38px;color:var(--gr);line-height:1}
+.ls .l{font-size:12px;color:var(--dim);margin-top:5px}
+
+/* Pricing */
+.pricing{max-width:900px;margin:80px auto 0;padding:0 20px;animation:up .6s .4s ease both}
+.pt{font-family:var(--fh);font-weight:900;font-size:34px;letter-spacing:-1.5px;text-align:center;margin-bottom:6px}
+.ps{color:var(--dim);font-size:14px;text-align:center;margin-bottom:36px}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.pc{background:var(--s1);border:1px solid var(--bd);border-radius:18px;padding:26px 22px;position:relative;transition:all .25s}
+.pc:hover{border-color:var(--gr);transform:translateY(-3px)}
+.pc.feat{border-color:rgba(181,255,71,.5);background:rgba(181,255,71,.04)}
+.pc-badge{position:absolute;top:14px;right:14px;background:var(--gr);color:var(--bg);font-family:var(--fh);font-weight:900;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:100px}
+.pc-name{font-family:var(--fh);font-weight:800;font-size:16px;margin-bottom:4px}
+.pc-price{font-family:var(--fh);font-weight:900;font-size:38px;letter-spacing:-2px;color:var(--gr);line-height:1;margin:12px 0 3px}
+.pc-price span{font-size:14px;font-weight:400;color:var(--dim)}
+.pc-period{font-size:12px;color:var(--dim);margin-bottom:16px}
+.pc-feats{list-style:none;margin-bottom:20px}
+.pc-feats li{font-size:12px;color:var(--dim);padding:4px 0;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:7px}
+.pc-feats li:last-child{border:none}
+.pc-feats li b{color:var(--txt);font-weight:400}
+.pc-btn{width:100%;padding:11px;border-radius:9px;font-family:var(--fh);font-weight:800;font-size:13px;cursor:pointer;border:none;transition:all .2s}
+.pc-btn-o{background:transparent;border:1px solid var(--bd);color:var(--txt)}
+.pc-btn-o:hover{border-color:var(--gr);color:var(--gr)}
+.pc-btn-g{background:var(--gr);color:var(--bg);box-shadow:0 4px 18px rgba(181,255,71,.25)}
+.pc-btn-g:hover{box-shadow:0 8px 28px rgba(181,255,71,.45)}
+
+@keyframes up{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+
+/* ══════════════════════════════
+   AUTH PAGE (Register + Login)
+══════════════════════════════ */
+#pg-auth{align-items:center;justify-content:center;padding:40px 20px}
+
+.auth-wrap{
+  background:var(--s1);border:1px solid var(--bd);border-radius:22px;
+  padding:40px 36px;width:100%;max-width:440px;
+  animation:up .4s ease;
 }
 
-.logo em { color: #b5ff47; font-style: normal; }
-
-.plan-badge {
-  font-size: 10px;
-  font-weight: 700;
-  background: rgba(181,255,71,.12);
-  color: #b5ff47;
-  border: 1px solid rgba(181,255,71,.25);
-  padding: 3px 9px;
-  border-radius: 100px;
+.auth-logo{
+  font-family:var(--fh);font-weight:900;font-size:20px;
+  text-align:center;margin-bottom:28px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
 }
+.auth-logo em{color:var(--gr);font-style:normal}
 
-/* Login state */
-#state-login { padding: 20px 16px; }
-
-.login-title {
-  font-weight: 700;
-  font-size: 14px;
-  margin-bottom: 4px;
+.auth-tabs{
+  display:grid;grid-template-columns:1fr 1fr;gap:4px;
+  background:var(--s2);border-radius:12px;padding:4px;margin-bottom:28px;
 }
-.login-sub { font-size: 12px; color: #6a6a8a; margin-bottom: 16px; }
-
-.input {
-  width: 100%;
-  background: #161622;
-  border: 1px solid #252538;
-  color: #e4e4f4;
-  padding: 9px 12px;
-  border-radius: 8px;
-  font-size: 13px;
-  margin-bottom: 10px;
-  outline: none;
+.auth-tab{
+  padding:10px;text-align:center;border-radius:9px;cursor:pointer;
+  font-family:var(--fh);font-weight:700;font-size:13px;color:var(--dim);
+  transition:all .2s;border:none;background:transparent;
 }
-.input:focus { border-color: #b5ff47; }
-.input::placeholder { color: #6a6a8a; }
+.auth-tab.on{background:var(--s3);color:var(--txt)}
 
-.btn {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-  transition: all .2s;
+.auth-form{display:none}
+.auth-form.on{display:block;animation:up .3s ease}
+
+.ah{font-family:var(--fh);font-weight:900;font-size:24px;letter-spacing:-1px;margin-bottom:4px}
+.as{font-size:13px;color:var(--dim);margin-bottom:22px}
+
+/* Form elements */
+.fg{margin-bottom:16px}
+.fl{display:block;font-family:var(--fh);font-weight:700;font-size:11px;letter-spacing:1px;color:var(--dim);text-transform:uppercase;margin-bottom:7px}
+.fi{
+  width:100%;background:var(--s2);border:1px solid var(--bd);
+  color:var(--txt);font-family:var(--fb);font-size:14px;
+  padding:11px 14px;border-radius:10px;outline:none;transition:border-color .2s;
 }
-.btn-green { background: #b5ff47; color: #07070e; }
-.btn-green:hover { box-shadow: 0 4px 16px rgba(181,255,71,.4); }
-.btn-outline {
-  background: transparent;
-  border: 1px solid #252538;
-  color: #e4e4f4;
-  margin-top: 8px;
+.fi:focus{border-color:var(--gr)}
+.fi::placeholder{color:var(--dim)}
+select.fi{cursor:pointer}
+
+.msg{border-radius:9px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+.msg.on{display:block}
+.msg-err{background:rgba(255,95,126,.08);border:1px solid rgba(255,95,126,.2);color:var(--rose)}
+.msg-ok{background:rgba(181,255,71,.07);border:1px solid rgba(181,255,71,.18);color:var(--gr)}
+
+.btn-full{
+  width:100%;background:var(--gr);color:var(--bg);
+  font-family:var(--fh);font-weight:900;font-size:14px;
+  padding:13px;border-radius:10px;border:none;cursor:pointer;
+  box-shadow:0 4px 18px rgba(181,255,71,.25);transition:all .2s;
 }
-.btn-outline:hover { border-color: #b5ff47; color: #b5ff47; }
+.btn-full:hover{box-shadow:0 8px 28px rgba(181,255,71,.4)}
+.btn-full:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
 
-.err { color: #ff5f7e; font-size: 12px; margin-top: 8px; display: none; }
-.err.show { display: block; }
+.auth-switch{font-size:12px;color:var(--dim);text-align:center;margin-top:14px}
+.auth-switch a{color:var(--gr);cursor:pointer;text-decoration:none}
 
-/* Main state */
-#state-main { padding: 0; }
+/* ══════════════════════════════
+   DASHBOARD
+══════════════════════════════ */
+#pg-dash{flex-direction:row}
 
-.user-row {
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border-bottom: 1px solid #252538;
+.sb{
+  width:220px;background:var(--s1);border-right:1px solid var(--bd);
+  display:flex;flex-direction:column;padding:26px 0;flex-shrink:0;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
 }
+.sb-logo{font-family:var(--fh);font-weight:900;font-size:19px;padding:0 20px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px;letter-spacing:-.5px}
+.sb-logo em{color:var(--gr);font-style:normal}
+.sb-nav{padding:16px 0;flex:1}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13px;font-family:var(--fh);font-weight:600;color:var(--dim);cursor:pointer;transition:all .2s;border-left:3px solid transparent}
+.ni:hover{color:var(--txt);background:rgba(255,255,255,.03)}
+.ni.on{color:var(--gr);border-left-color:var(--gr);background:rgba(181,255,71,.05)}
+.n-bd{margin-left:auto;background:var(--gr);color:var(--bg);font-size:9px;font-weight:900;font-family:var(--fh);padding:2px 7px;border-radius:100px}
+.sb-bottom{padding:14px 20px;border-top:1px solid var(--bd)}
+.sb-user{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.sb-av{width:34px;height:34px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--gr),var(--sky));display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:900;font-size:14px;color:var(--bg)}
+.sb-nm{font-size:13px;font-weight:600;font-family:var(--fh)}
+.sb-pl{font-size:11px;color:var(--gr)}
+.sb-logout{width:100%;background:transparent;border:1px solid var(--bd);color:var(--dim);font-family:var(--fh);font-weight:700;font-size:12px;padding:8px;border-radius:8px;cursor:pointer;transition:all .2s}
+.sb-logout:hover{border-color:var(--rose);color:var(--rose)}
 
-.avatar {
-  width: 30px; height: 30px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #b5ff47, #47c8ff);
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 900; font-size: 13px; color: #07070e;
-  flex-shrink: 0;
-}
+/* Main */
+.dm{flex:1;overflow-y:auto}
+.dm-tabs{display:flex;border-bottom:1px solid var(--bd);padding:0 28px;background:var(--s1);position:sticky;top:0;z-index:5;overflow-x:auto}
+.dm-tab{padding:15px 18px;font-family:var(--fh);font-weight:700;font-size:13px;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
+.dm-tab:hover{color:var(--txt)}
+.dm-tab.on{color:var(--gr);border-bottom-color:var(--gr)}
+.dm-panel{display:none;padding:28px;animation:up .3s ease}
+.dm-panel.on{display:block}
 
-.user-name { font-weight: 700; font-size: 13px; }
-.user-email { font-size: 11px; color: #6a6a8a; }
-
-.signout-btn {
-  margin-left: auto;
-  background: transparent;
-  border: 1px solid #252538;
-  color: #6a6a8a;
-  font-size: 11px;
-  padding: 4px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-.signout-btn:hover { border-color: #ff5f7e; color: #ff5f7e; }
+/* Alerts */
+.alert{border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:18px}
+.alert-warn{background:rgba(255,200,68,.07);border:1px solid rgba(255,200,68,.2);color:var(--gold)}
+.alert-ok{background:rgba(181,255,71,.07);border:1px solid rgba(181,255,71,.18);color:var(--gr)}
+.alert-err{background:rgba(255,95,126,.07);border:1px solid rgba(255,95,126,.2);color:var(--rose)}
+.alert-info{background:rgba(71,200,255,.07);border:1px solid rgba(71,200,255,.2);color:var(--sky)}
 
 /* Stats */
-.stats { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 1px solid #252538; }
-.stat { padding: 12px 10px; text-align: center; border-right: 1px solid #252538; }
-.stat:last-child { border: none; }
-.stat-num { font-size: 22px; font-weight: 900; color: #b5ff47; line-height: 1; }
-.stat-label { font-size: 10px; color: #6a6a8a; margin-top: 3px; }
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.sc{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:16px;transition:all .2s;cursor:default}
+.sc:hover{border-color:var(--gr);transform:translateY(-2px)}
+.sc-l{font-family:var(--fh);font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--dim);margin-bottom:8px}
+.sc-v{font-family:var(--fh);font-weight:900;font-size:34px;color:var(--gr);line-height:1;margin-bottom:4px;transition:transform .2s}
+.sc-s{font-size:11px;color:var(--dim)}
 
-/* Progress bar */
-.prog-wrap { padding: 10px 16px; border-bottom: 1px solid #252538; }
-.prog-head { display: flex; justify-content: space-between; font-size: 11px; color: #6a6a8a; margin-bottom: 6px; }
-.prog-head b { color: #b5ff47; }
-.prog-track { height: 4px; background: #252538; border-radius: 100px; overflow: hidden; }
-.prog-fill { height: 100%; background: linear-gradient(90deg, #b5ff47, #47c8ff); border-radius: 100px; transition: width .5s; width: 0%; }
+/* Bot card */
+.bot-card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:18px;margin-bottom:20px;display:flex;align-items:center;gap:14px}
+.bot-ico{font-size:30px;width:52px;height:52px;flex-shrink:0;background:rgba(181,255,71,.07);border-radius:12px;display:flex;align-items:center;justify-content:center}
+.bot-inf{flex:1}
+.bot-t{font-family:var(--fh);font-weight:800;font-size:14px;margin-bottom:3px}
+.bot-d{font-size:12px;color:var(--dim);margin-bottom:10px}
+.pt2{height:4px;background:var(--bd);border-radius:100px;overflow:hidden}
+.pb{height:100%;background:linear-gradient(90deg,var(--gr),var(--sky));border-radius:100px;width:0%;transition:width .6s ease}
+.pm-h{display:flex;justify-content:space-between;font-size:11px;color:var(--dim);margin-bottom:5px}
+.pm-h b{color:var(--gr)}
+.bot-btns{display:flex;gap:8px;flex-shrink:0}
+.bb{font-family:var(--fh);font-weight:700;font-size:12px;padding:9px 16px;border-radius:100px;cursor:pointer;border:none;transition:all .2s}
+.bb-o{background:transparent;border:1px solid var(--bd);color:var(--txt)}
+.bb-o:hover{border-color:var(--rose);color:var(--rose)}
+.bb-g{background:var(--gr);color:var(--bg)}
+.bb-g:hover{box-shadow:0 4px 14px rgba(181,255,71,.3)}
 
-/* Status */
-.status-row {
-  padding: 10px 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border-bottom: 1px solid #252538;
-  font-size: 12px;
+/* Upgrade banner */
+.up-banner{background:linear-gradient(135deg,rgba(181,255,71,.08),rgba(71,200,255,.04));border:1px solid rgba(181,255,71,.2);border-radius:var(--r);padding:16px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.up-t{font-family:var(--fh);font-weight:800;font-size:14px;margin-bottom:3px}
+.up-s{font-size:12px;color:var(--dim)}
+
+/* Section title */
+.sec-t{font-family:var(--fh);font-weight:800;font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+
+/* Jobs table */
+.jtbl{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+.jth{display:grid;grid-template-columns:2fr 1.2fr .8fr .8fr .9fr;padding:10px 16px;background:var(--s2);border-bottom:1px solid var(--bd)}
+.jth span{font-family:var(--fh);font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--dim)}
+.jtr{display:grid;grid-template-columns:2fr 1.2fr .8fr .8fr .9fr;padding:11px 16px;border-top:1px solid var(--bd);align-items:center;transition:background .2s;animation:up .25s ease both}
+.jtr:hover{background:rgba(181,255,71,.02)}
+.jt-ttl{font-size:12px;font-weight:500;font-family:var(--fh)}
+.jt-co,.jt-loc,.jt-plt,.jt-time{font-size:12px;color:var(--dim)}
+.jt-co{margin-top:2px}
+.bdg{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-family:var(--fh);font-weight:700;padding:3px 9px;border-radius:100px}
+.b-ap{background:rgba(181,255,71,.1);color:var(--gr)}
+.b-vi{background:rgba(71,200,255,.1);color:var(--sky)}
+.b-in{background:rgba(255,200,68,.1);color:var(--gold)}
+.b-rj{background:rgba(255,95,126,.1);color:var(--rose)}
+.empty-row{text-align:center;padding:40px;color:var(--dim);font-size:13px}
+.empty-row .ei{font-size:32px;margin-bottom:10px}
+
+/* Terminal log */
+.terminal{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:16px;font-family:'Consolas',monospace;font-size:12px;height:200px;overflow-y:auto;margin-bottom:16px}
+.tl{margin-bottom:5px}
+.tl .ts{color:var(--dim);margin-right:8px}
+.tl.ok .tm{color:var(--gr)}
+.tl.info .tm{color:var(--sky)}
+.tl.warn .tm{color:var(--gold)}
+.tl.err .tm{color:var(--rose)}
+
+/* Preferences form */
+.pref-section-title{font-family:var(--fh);font-weight:800;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gr);margin:24px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--bd)}
+.pref-section-title:first-child{margin-top:0}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.tag{background:var(--s2);border:1px solid var(--bd);color:var(--dim);font-family:var(--fh);font-weight:700;font-size:12px;padding:6px 14px;border-radius:100px;cursor:pointer;transition:all .2s;user-select:none}
+.tag:hover{border-color:var(--gr);color:var(--gr)}
+.tag.on{background:rgba(181,255,71,.1);border-color:var(--gr);color:var(--gr)}
+.notice{background:rgba(181,255,71,.04);border:1px solid rgba(181,255,71,.12);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--dim);line-height:1.6;margin-bottom:18px}
+.notice b{color:var(--txt);font-weight:400}
+
+/* Install extension box */
+.ext-box{background:var(--s1);border:2px solid rgba(181,255,71,.3);border-radius:16px;padding:28px;text-align:center;margin-bottom:20px}
+.ext-box .ico{font-size:48px;display:block;margin-bottom:16px}
+.ext-box .et{font-family:var(--fh);font-weight:900;font-size:20px;margin-bottom:8px}
+.ext-box .es{font-size:14px;color:var(--dim);margin-bottom:20px;line-height:1.6}
+.ext-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px;text-align:left}
+.ext-step{background:var(--s2);border-radius:10px;padding:14px}
+.ext-step .sn{font-family:var(--fh);font-weight:900;font-size:22px;color:rgba(181,255,71,.3);line-height:1;margin-bottom:6px}
+.ext-step .st2{font-family:var(--fh);font-weight:700;font-size:12px;margin-bottom:4px}
+.ext-step .sd{font-size:11px;color:var(--dim);line-height:1.5}
+
+/* Payment modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:center;justify-content:center;padding:20px}
+.modal-bg.on{display:flex}
+.modal{background:var(--s1);border:1px solid var(--bd);border-radius:20px;padding:36px;max-width:420px;width:100%;position:relative}
+.modal-x{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--dim);font-size:20px;cursor:pointer}
+.modal-x:hover{color:var(--txt)}
+.modal-t{font-family:var(--fh);font-weight:900;font-size:24px;letter-spacing:-1px;margin-bottom:4px}
+.modal-s{font-size:13px;color:var(--dim);margin-bottom:24px}
+.modal-plan{display:flex;justify-content:space-between;align-items:center;background:rgba(181,255,71,.06);border:1px solid rgba(181,255,71,.18);border-radius:12px;padding:16px;margin-bottom:22px}
+.mp-nm{font-family:var(--fh);font-weight:800;font-size:15px}
+.mp-pr{font-family:var(--fh);font-weight:900;font-size:26px;color:var(--gr)}
+.modal-safe{font-size:11px;color:var(--dim);text-align:center;margin-top:11px}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+
+/* Mobile */
+@media(max-width:768px){
+  #pg-dash{flex-direction:column}
+  .sb{width:100%;height:auto;position:relative;flex-direction:column}
+  .sb-nav{display:flex;flex-wrap:wrap;padding:8px}
+  .ni{padding:7px 12px;font-size:12px;border-left:none;border-bottom:2px solid transparent;flex:0 0 auto}
+  .ni.on{border-left:none;border-bottom-color:var(--gr)}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .plans{grid-template-columns:1fr}
+  .fr{grid-template-columns:1fr}
+  .jth,.jtr{grid-template-columns:2fr 1fr 1fr}
+  .jt-loc,.jt-plt{display:none}
+  .dm-panel{padding:16px}
+  .bot-card{flex-direction:column;align-items:flex-start}
+  .up-banner{flex-direction:column}
+  .ext-steps{grid-template-columns:1fr}
+  .auth-wrap{padding:28px 20px}
+  .l-btns{flex-direction:column;align-items:center}
 }
-.status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-.status-dot.running { background: #b5ff47; box-shadow: 0 0 6px #b5ff47; animation: blink 1.6s infinite; }
-.status-dot.paused { background: #ffc844; box-shadow: 0 0 6px #ffc844; }
-.status-dot.stopped, .status-dot.idle { background: #6a6a8a; }
-.status-dot.error { background: #ff5f7e; }
-@keyframes blink { 0%,100%{opacity:1}50%{opacity:.2} }
-
-/* Log */
-.log-wrap { height: 100px; overflow-y: auto; background: #0f0f1a; padding: 8px 12px; border-bottom: 1px solid #252538; }
-.log-line { font-size: 11px; font-family: 'Consolas', monospace; padding: 2px 0; }
-.log-line.ok { color: #b5ff47; }
-.log-line.info { color: #47c8ff; }
-.log-line.warn { color: #ffc844; }
-.log-line.err { color: #ff5f7e; }
-
-/* Controls */
-.controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 12px 16px; }
-.ctrl-btn {
-  padding: 9px 6px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-  transition: all .2s;
-  text-align: center;
-}
-.ctrl-btn:disabled { opacity: .4; cursor: not-allowed; }
-.ctrl-start { background: #b5ff47; color: #07070e; }
-.ctrl-start:hover:not(:disabled) { box-shadow: 0 4px 14px rgba(181,255,71,.4); }
-.ctrl-pause { background: transparent; border: 1px solid #252538; color: #e4e4f4; }
-.ctrl-pause:hover:not(:disabled) { border-color: #ffc844; color: #ffc844; }
-.ctrl-stop { background: transparent; border: 1px solid #252538; color: #e4e4f4; }
-.ctrl-stop:hover:not(:disabled) { border-color: #ff5f7e; color: #ff5f7e; }
-
-/* Footer */
-.footer {
-  padding: 10px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-top: 1px solid #252538;
-}
-.open-dashboard {
-  font-size: 11px;
-  color: #b5ff47;
-  cursor: pointer;
-  text-decoration: none;
-}
-.naukri-note { font-size: 10px; color: #6a6a8a; }
-
-/* Not-logged-into-naukri warning */
-.naukri-warn {
-  margin: 10px 16px;
-  background: rgba(255,200,68,.08);
-  border: 1px solid rgba(255,200,68,.25);
-  border-radius: 8px;
-  padding: 10px 12px;
-  font-size: 12px;
-  color: #ffc844;
-  display: none;
-}
-.naukri-warn.show { display: block; }
-.naukri-warn a { color: #ffc844; font-weight: 700; }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="logo">Apply<em>Pilot</em></div>
-  <div class="plan-badge" id="plan-badge">Free Plan</div>
-</div>
-
-<!-- LOGIN STATE -->
-<div id="state-login">
-  <div class="login-title">Connect your account</div>
-  <div class="login-sub">Login with your ApplyPilot email to start applying</div>
-  <input class="input" id="inp-email" type="email" placeholder="Email" />
-  <input class="input" id="inp-pass" type="password" placeholder="Password" />
-  <button class="btn btn-green" id="btn-login">Sign In →</button>
-  <div class="err" id="login-err"></div>
-  <button class="btn btn-outline" id="btn-register">No account? Register free →</button>
-</div>
-
-<!-- MAIN STATE -->
-<div id="state-main" style="display:none">
-  <div class="user-row">
-    <div class="avatar" id="av">M</div>
-    <div>
-      <div class="user-name" id="uname">User</div>
-      <div class="user-email" id="uemail">user@email.com</div>
+<!-- ═══════════════════════════════
+     LANDING
+═══════════════════════════════ -->
+<div id="pg-land" class="page on">
+  <div style="text-align:center;padding:60px 20px">
+    <div class="chip"><div class="chip-dot"></div>Playwright Bot · Zero Manual Applying</div>
+    <h1 class="lh">Apply to 50 jobs<em>while you sleep.</em></h1>
+    <p class="lp">Install our Chrome extension. Set your preferences.<br>Bot logs into <b>Naukri using your Chrome</b> and applies to matching jobs every day — automatically.</p>
+    <div class="l-btns">
+      <button class="btn-gr" onclick="showAuth('register')">🚀 Create Free Account</button>
+      <button class="btn-out" onclick="showAuth('login')">Sign In →</button>
     </div>
-    <button class="signout-btn" id="btn-signout">Sign out</button>
-  </div>
-
-  <div class="naukri-warn" id="naukri-warn">
-    ⚠️ <a href="https://www.naukri.com/nlogin/login" target="_blank">Login to Naukri first</a> — the bot needs your Naukri session
-  </div>
-
-  <div class="stats">
-    <div class="stat">
-      <div class="stat-num" id="s-applied">0</div>
-      <div class="stat-label">Applied today</div>
+    <div class="l-stats">
+      <div class="ls"><div class="n" id="hc1">0</div><div class="l">Jobs applied today</div></div>
+      <div class="ls"><div class="n" id="hc2">0</div><div class="l">Active users</div></div>
+      <div class="ls"><div class="n" id="hc3">0%</div><div class="l">Avg response rate</div></div>
     </div>
-    <div class="stat">
-      <div class="stat-num" id="s-limit">20</div>
-      <div class="stat-label">Daily limit</div>
+    <div class="pricing">
+      <div class="pt">Simple pricing.</div>
+      <p class="ps">Start free. Upgrade when you see results.</p>
+      <div class="plans">
+        <div class="pc">
+          <div class="pc-name">Free</div>
+          <div class="pc-price">₹0<span></span></div>
+          <div class="pc-period">Forever free</div>
+          <ul class="pc-feats">
+            <li>✓ <b>20 applications/day</b></li>
+            <li>✓ Naukri automation</li>
+            <li>✓ Template cover letter</li>
+            <li>✓ Application tracking</li>
+            <li style="opacity:.35">✗ LinkedIn bot</li>
+          </ul>
+          <button class="pc-btn pc-btn-o" onclick="showAuth('register')">Start Free</button>
+        </div>
+        <div class="pc feat">
+          <div class="pc-badge">POPULAR</div>
+          <div class="pc-name">Pro</div>
+          <div class="pc-price">₹499<span>/mo</span></div>
+          <div class="pc-period">Billed monthly</div>
+          <ul class="pc-feats">
+            <li>✓ <b>50 applications/day</b></li>
+            <li>✓ Naukri + LinkedIn</li>
+            <li>✓ Smart cover letters</li>
+            <li>✓ Interview alerts</li>
+            <li>✓ Priority support</li>
+          </ul>
+          <button class="pc-btn pc-btn-g" onclick="openPay('pro')">Upgrade to Pro</button>
+        </div>
+        <div class="pc">
+          <div class="pc-name">Elite</div>
+          <div class="pc-price">₹999<span>/mo</span></div>
+          <div class="pc-period">Billed monthly</div>
+          <ul class="pc-feats">
+            <li>✓ <b>Unlimited apps/day</b></li>
+            <li>✓ All job platforms</li>
+            <li>✓ AI cover letters</li>
+            <li>✓ Resume optimizer</li>
+            <li>✓ Priority support</li>
+          </ul>
+          <button class="pc-btn pc-btn-o" onclick="openPay('elite')">Upgrade to Elite</button>
+        </div>
+      </div>
     </div>
-    <div class="stat">
-      <div class="stat-num" id="s-total">0</div>
-      <div class="stat-label">All time</div>
-    </div>
-  </div>
-
-  <div class="prog-wrap">
-    <div class="prog-head">
-      <span id="prog-label">Ready to start</span>
-      <b id="prog-pct">0%</b>
-    </div>
-    <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
-  </div>
-
-  <div class="status-row">
-    <div class="status-dot idle" id="status-dot"></div>
-    <span id="status-text">Bot is idle — click Start to begin</span>
-  </div>
-
-  <div class="log-wrap" id="log-wrap">
-    <div class="log-line info">Ready. Click Start Bot to begin.</div>
-  </div>
-
-  <div class="controls">
-    <button class="ctrl-btn ctrl-start" id="btn-start">▶ Start</button>
-    <button class="ctrl-btn ctrl-pause" id="btn-pause" disabled>⏸ Pause</button>
-    <button class="ctrl-btn ctrl-stop" id="btn-stop" disabled>⏹ Stop</button>
-  </div>
-
-  <div class="footer">
-    <a class="open-dashboard" id="open-dash" href="#">📊 Open Dashboard</a>
-    <div class="naukri-note">Using your Chrome + IP</div>
   </div>
 </div>
 
-<script src="popup.js"></script>
+<!-- ═══════════════════════════════
+     AUTH (Register + Login)
+═══════════════════════════════ -->
+<div id="pg-auth" class="page">
+  <div class="auth-wrap">
+    <div class="auth-logo">🚀 Apply<em>Pilot</em></div>
+    <div class="auth-tabs">
+      <button class="auth-tab on" id="tab-reg" onclick="switchTab('register')">Create Account</button>
+      <button class="auth-tab" id="tab-log" onclick="switchTab('login')">Sign In</button>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div class="auth-form on" id="form-register">
+      <div class="ah">Create your account</div>
+      <div class="as">Free forever. No credit card needed.</div>
+      <div class="msg msg-err" id="reg-err"></div>
+      <div class="msg msg-ok"  id="reg-ok"></div>
+      <div class="fg"><label class="fl">Full Name</label><input class="fi" id="reg-name" placeholder="e.g. Manideep" /></div>
+      <div class="fg"><label class="fl">Email</label><input class="fi" id="reg-email" type="email" placeholder="you@email.com" /></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" id="reg-pass" type="password" placeholder="Min 6 characters" /></div>
+      <button class="btn-full" onclick="register()">Create Account →</button>
+      <div class="auth-switch">Already have an account? <a onclick="switchTab('login')">Sign in</a></div>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div class="auth-form" id="form-login">
+      <div class="ah">Welcome back</div>
+      <div class="as">Sign in to your ApplyPilot account.</div>
+      <div class="msg msg-err" id="log-err"></div>
+      <div class="fg"><label class="fl">Email</label><input class="fi" id="log-email" type="email" placeholder="you@email.com" /></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" id="log-pass" type="password" placeholder="Your password" /></div>
+      <button class="btn-full" onclick="login()">Sign In →</button>
+      <div class="auth-switch">No account? <a onclick="switchTab('register')">Create one free</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     DASHBOARD
+═══════════════════════════════ -->
+<div id="pg-dash" class="page">
+  <div class="sb">
+    <div class="sb-logo">🚀 Apply<em>Pilot</em></div>
+    <nav class="sb-nav">
+      <div class="ni on" onclick="showTab('overview')">🏠 Overview</div>
+      <div class="ni" onclick="showTab('bot')">🤖 Bot Control <span class="n-bd" id="bot-badge">OFF</span></div>
+      <div class="ni" onclick="showTab('extension')">🧩 Extension</div>
+      <div class="ni" onclick="showTab('prefs')">⚙️ Preferences</div>
+      <div class="ni" onclick="showTab('apps')">📋 Applications <span class="n-bd" id="apps-badge">0</span></div>
+    </nav>
+    <div class="sb-bottom">
+      <div class="sb-user">
+        <div class="sb-av" id="sb-av">M</div>
+        <div><div class="sb-nm" id="sb-nm">User</div><div class="sb-pl" id="sb-pl">Free Plan</div></div>
+      </div>
+      <button class="sb-logout" onclick="logout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="dm">
+    <div class="dm-tabs">
+      <div class="dm-tab on"  onclick="showTab('overview')">Overview</div>
+      <div class="dm-tab" onclick="showTab('bot')">Bot Control</div>
+      <div class="dm-tab" onclick="showTab('extension')">Extension</div>
+      <div class="dm-tab" onclick="showTab('prefs')">Preferences</div>
+      <div class="dm-tab" onclick="showTab('apps')">Applications</div>
+    </div>
+
+    <!-- ── TAB: OVERVIEW ── -->
+    <div class="dm-panel on" id="tab-overview">
+      <div id="setup-alert" class="alert alert-warn" style="display:none">
+        ⚠️ To start applying: <b id="setup-todo"></b>
+      </div>
+      <div class="stat-grid">
+        <div class="sc"><div class="sc-l">Total Applied</div><div class="sc-v" id="sv1">0</div><div class="sc-s" id="ss1">–</div></div>
+        <div class="sc"><div class="sc-l">Responses</div><div class="sc-v" id="sv2">0</div><div class="sc-s">Rate: <span id="ss-rate">0%</span></div></div>
+        <div class="sc"><div class="sc-l">Interviews</div><div class="sc-v" id="sv3">0</div><div class="sc-s" id="ss3">Keep going!</div></div>
+        <div class="sc"><div class="sc-l">Today</div><div class="sc-v" id="sv4">0</div><div class="sc-s" id="ss4">/ 20 limit</div></div>
+      </div>
+      <div class="bot-card">
+        <div class="bot-ico">🤖</div>
+        <div class="bot-inf">
+          <div class="bot-t" id="bt-title">Bot Status: <span style="color:var(--dim)">Extension not started</span></div>
+          <div class="bot-d" id="bt-desc">Install the extension and click Start Bot from the extension popup</div>
+          <div><div class="pm-h"><span id="pm-status">Waiting...</span><b id="pm-count">0 / 20</b></div><div class="pt2"><div class="pb" id="dpb"></div></div></div>
+        </div>
+        <div class="bot-btns">
+          <button class="bb bb-g" onclick="showTab('extension')">🧩 Get Extension</button>
+        </div>
+      </div>
+      <div class="up-banner" id="up-banner">
+        <div><div class="up-t">⚡ Apply 50 jobs/day — Upgrade to Pro</div><div class="up-s">₹499/month · Most users get an interview within 7 days</div></div>
+        <button class="btn-gr" style="font-size:13px;padding:11px 22px;white-space:nowrap" onclick="openPay('pro')">Upgrade ₹499 →</button>
+      </div>
+      <div class="sec-t">📋 Recent Applications <span style="font-size:12px;color:var(--dim);font-weight:400" id="apps-count">(0)</span></div>
+      <div class="jtbl">
+        <div class="jth"><span>Job / Company</span><span>Location</span><span>Platform</span><span>Time</span><span>Status</span></div>
+        <div id="jobs-body"><div class="empty-row"><div class="ei">📋</div>No applications yet. Install the extension and start the bot!</div></div>
+      </div>
+    </div>
+
+    <!-- ── TAB: BOT CONTROL ── -->
+    <div class="dm-panel" id="tab-bot">
+      <div class="sec-t" style="margin-bottom:16px">🤖 Bot Control</div>
+      <div class="alert alert-info">
+        ℹ️ The bot runs inside your Chrome extension — not on our server. Start/stop it from the extension popup in your Chrome toolbar.
+      </div>
+      <div class="alert alert-ok" id="bot-status-msg">Bot is idle. Open the extension popup and click Start Bot.</div>
+      <div class="terminal" id="log-terminal">
+        <div class="tl info"><span class="ts">--:--:--</span><span class="tm">Waiting for bot activity...</span></div>
+      </div>
+      <div style="background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:16px">
+        <div class="pm-h" style="margin-bottom:8px"><span id="bt-prog-label">0 applications today</span><b id="bt-prog-pct">0%</b></div>
+        <div class="pt2" style="height:6px"><div class="pb" id="bt-prog-bar"></div></div>
+      </div>
+    </div>
+
+    <!-- ── TAB: EXTENSION ── -->
+    <div class="dm-panel" id="tab-extension">
+      <div class="sec-t" style="margin-bottom:16px">🧩 Chrome Extension</div>
+
+      <div class="ext-box">
+        <span class="ico">🧩</span>
+        <div class="et">Install ApplyPilot Extension</div>
+        <div class="es">
+          The extension runs the bot inside <b>your Chrome browser</b>.<br>
+          Uses your IP and your Naukri session — completely undetectable.
+        </div>
+        <button class="btn-gr" style="font-size:14px;padding:13px 32px" onclick="installExt()">
+          Add to Chrome — Free
+        </button>
+        <div style="margin-top:12px;font-size:12px;color:var(--dim)">
+          Or load manually in Developer Mode (instructions below)
+        </div>
+        <div class="ext-steps">
+          <div class="ext-step">
+            <div class="sn">1</div>
+            <div class="st2">Install Extension</div>
+            <div class="sd">Click "Add to Chrome" above or load from developer mode</div>
+          </div>
+          <div class="ext-step">
+            <div class="sn">2</div>
+            <div class="st2">Login in Popup</div>
+            <div class="sd">Click extension icon → enter your ApplyPilot email + password</div>
+          </div>
+          <div class="ext-step">
+            <div class="sn">3</div>
+            <div class="st2">Open Naukri + Start</div>
+            <div class="sd">Open naukri.com → login → click Start Bot in extension popup</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert alert-warn">
+        ⚠️ <b>Developer Mode Installation</b> (until Chrome Web Store approval):<br>
+        Chrome → chrome://extensions → Developer mode ON → Load unpacked → select extension/ folder
+      </div>
+    </div>
+
+    <!-- ── TAB: PREFERENCES ── -->
+    <div class="dm-panel" id="tab-prefs">
+      <div class="sec-t" style="margin-bottom:0">⚙️ Preferences</div>
+      <div style="max-width:580px">
+
+        <div class="msg msg-ok"  id="pref-ok"  style="display:none">✅ Preferences saved!</div>
+        <div class="msg msg-err" id="pref-err" style="display:none"></div>
+
+        <!-- Naukri Login -->
+        <div class="pref-section-title">🔑 Naukri Login</div>
+        <div class="notice">🔐 <b>Your Naukri login is used only to apply on your behalf via the extension.</b> Stored encrypted — never shared.</div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Naukri Email</label><input class="fi" id="p-email" type="email" placeholder="naukri@email.com" /></div>
+          <div class="fg"><label class="fl">Naukri Password</label><input class="fi" id="p-pass" type="password" placeholder="Your Naukri password" /></div>
+        </div>
+
+        <!-- Job Targets -->
+        <div class="pref-section-title">🎯 Job Targets</div>
+        <div class="fg">
+          <label class="fl">Target Job Titles</label>
+          <div class="tags" id="p-jobs">
+            <div class="tag on" onclick="tt(this)">QA Automation Engineer</div>
+            <div class="tag" onclick="tt(this)">SDET</div>
+            <div class="tag" onclick="tt(this)">Test Engineer</div>
+            <div class="tag" onclick="tt(this)">QA Analyst</div>
+            <div class="tag" onclick="tt(this)">Automation Tester</div>
+            <div class="tag" onclick="tt(this)">Software Developer</div>
+            <div class="tag" onclick="tt(this)">Full Stack Developer</div>
+            <div class="tag" onclick="tt(this)">Backend Developer</div>
+            <div class="tag" onclick="tt(this)">Frontend Developer</div>
+            <div class="tag" onclick="tt(this)">Business Analyst</div>
+            <div class="tag" onclick="tt(this)">DevOps Engineer</div>
+            <div class="tag" onclick="tt(this)">Data Engineer</div>
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl">Locations</label>
+          <div class="tags" id="p-locs">
+            <div class="tag on" onclick="tt(this)">Hyderabad</div>
+            <div class="tag on" onclick="tt(this)">Remote</div>
+            <div class="tag" onclick="tt(this)">Bengaluru</div>
+            <div class="tag" onclick="tt(this)">Mumbai</div>
+            <div class="tag" onclick="tt(this)">Chennai</div>
+            <div class="tag" onclick="tt(this)">Pune</div>
+            <div class="tag" onclick="tt(this)">Delhi</div>
+            <div class="tag" onclick="tt(this)">Noida</div>
+            <div class="tag" onclick="tt(this)">Gurugram</div>
+          </div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Total Experience (years)</label><input class="fi" id="p-exp-yrs" type="number" placeholder="e.g. 2" min="0" max="30" /></div>
+          <div class="fg"><label class="fl">Max apps per day</label><select class="fi" id="p-limit"><option value="10">10/day — Safe</option><option value="20" selected>20/day — Free</option><option value="50">50/day — Pro</option></select></div>
+        </div>
+
+        <!-- CTC & Notice -->
+        <div class="pref-section-title">💰 Salary & Notice Period</div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Current CTC (₹ LPA)</label><input class="fi" id="p-cur-ctc" type="number" placeholder="e.g. 6" /></div>
+          <div class="fg"><label class="fl">Expected CTC (₹ LPA)</label><input class="fi" id="p-exp-ctc" type="number" placeholder="e.g. 9" /></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Notice Period</label><select class="fi" id="p-notice"><option value="0">Immediate</option><option value="15">15 days</option><option value="30" selected>30 days</option><option value="60">60 days</option><option value="90">90 days</option></select></div>
+          <div class="fg"><label class="fl">Work Mode</label><select class="fi" id="p-work-mode"><option value="any" selected>Any</option><option value="remote">Remote Only</option><option value="hybrid">Hybrid</option><option value="office">Office Only</option></select></div>
+        </div>
+
+        <!-- Skills -->
+        <div class="pref-section-title">🛠️ Skill Experience (years)</div>
+        <div class="notice">These answer screening questions like "How many years of Selenium experience?"</div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Selenium</label><input class="fi" id="sk-selenium" type="number" placeholder="0" min="0" /></div>
+          <div class="fg"><label class="fl">Cypress</label><input class="fi" id="sk-cypress" type="number" placeholder="0" min="0" /></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Java</label><input class="fi" id="sk-java" type="number" placeholder="0" min="0" /></div>
+          <div class="fg"><label class="fl">Python</label><input class="fi" id="sk-python" type="number" placeholder="0" min="0" /></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label class="fl">JavaScript</label><input class="fi" id="sk-js" type="number" placeholder="0" min="0" /></div>
+          <div class="fg"><label class="fl">React</label><input class="fi" id="sk-react" type="number" placeholder="0" min="0" /></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Angular</label><input class="fi" id="sk-angular" type="number" placeholder="0" min="0" /></div>
+          <div class="fg"><label class="fl">Node.js</label><input class="fi" id="sk-node" type="number" placeholder="0" min="0" /></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label class="fl">SQL</label><input class="fi" id="sk-sql" type="number" placeholder="0" min="0" /></div>
+          <div class="fg"><label class="fl">AWS</label><input class="fi" id="sk-aws" type="number" placeholder="0" min="0" /></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Azure</label><input class="fi" id="sk-azure" type="number" placeholder="0" min="0" /></div>
+          <div class="fg"><label class="fl">DevOps/CI-CD</label><input class="fi" id="sk-devops" type="number" placeholder="0" min="0" /></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label class="fl">API Testing</label><input class="fi" id="sk-api" type="number" placeholder="0" min="0" /></div>
+          <div class="fg"><label class="fl">Manual Testing</label><input class="fi" id="sk-manual" type="number" placeholder="0" min="0" /></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Agile/Scrum</label><input class="fi" id="sk-agile" type="number" placeholder="0" min="0" /></div>
+          <div class="fg"><label class="fl">JIRA</label><input class="fi" id="sk-jira" type="number" placeholder="0" min="0" /></div>
+        </div>
+
+        <!-- Personal -->
+        <div class="pref-section-title">👤 Personal Details</div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Phone Number</label><input class="fi" id="p-phone" type="tel" placeholder="9999999999" /></div>
+          <div class="fg"><label class="fl">Age</label><input class="fi" id="p-age" type="number" placeholder="26" min="18" max="60" /></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Gender</label><select class="fi" id="p-gender"><option value="male">Male</option><option value="female">Female</option><option value="other">Prefer not to say</option></select></div>
+          <div class="fg"><label class="fl">Qualification</label><select class="fi" id="p-edu"><option value="btech">B.Tech / B.E.</option><option value="mtech">M.Tech</option><option value="bsc">B.Sc</option><option value="mca">MCA</option><option value="mba">MBA</option></select></div>
+        </div>
+        <div class="fg"><label class="fl">Open to Relocate?</label><select class="fi" id="p-relocate"><option value="yes">Yes</option><option value="no">No</option></select></div>
+        <div class="fg"><label class="fl">Your Key Skills (for cover letters)</label><textarea class="fi" id="p-skills" rows="3" placeholder="Selenium, TestNG, Java, Python, JIRA, API Testing, Git..."></textarea></div>
+
+        <button class="btn-full" style="margin-top:8px" onclick="savePrefs()">💾 Save All Preferences</button>
+      </div>
+    </div>
+
+    <!-- ── TAB: APPLICATIONS ── -->
+    <div class="dm-panel" id="tab-apps">
+      <div class="sec-t" style="margin-bottom:16px">📋 All Applications <span style="font-size:12px;color:var(--dim);font-weight:400" id="apps-count2">(0)</span></div>
+      <div class="jtbl">
+        <div class="jth"><span>Job / Company</span><span>Location</span><span>Platform</span><span>Time</span><span>Status</span></div>
+        <div id="all-jobs-body"><div class="empty-row"><div class="ei">📋</div>No applications yet.</div></div>
+      </div>
+    </div>
+
+  </div><!-- dm -->
+</div><!-- pg-dash -->
+
+<!-- PAYMENT MODAL -->
+<div class="modal-bg" id="pay-modal">
+  <div class="modal">
+    <button class="modal-x" onclick="closePay()">✕</button>
+    <div class="modal-t">Upgrade Plan</div>
+    <div class="modal-s">More applications = more interviews</div>
+    <div class="modal-plan">
+      <div><div class="mp-nm" id="mp-nm">Pro Plan</div><div style="font-size:12px;color:var(--dim)">50 apps/day · Naukri + LinkedIn</div></div>
+      <div class="mp-pr" id="mp-pr">₹499/mo</div>
+    </div>
+    <button class="btn-full" onclick="payNow()">💳 Pay with Razorpay</button>
+    <div class="modal-safe">🔒 Secured by Razorpay · UPI, Cards, NetBanking</div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// CONFIG — change to your Railway URL
+// ══════════════════════════════════════
+const API = 'http://localhost:3000/api';
+// Production: const API = 'https://your-app.railway.app/api';
+
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+const S = {
+  token:  localStorage.getItem('ap_token'),
+  user:   null,
+  apps:   [],
+  plan:   'free',
+  pollTimer: null,
+  selPlan: 'pro',
+};
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // Landing counters
+  cnt(document.getElementById('hc1'), 1247);
+  cnt(document.getElementById('hc2'), 3842);
+  cnt(document.getElementById('hc3'), 12, '%');
+
+  // Check hash for direct navigation
+  const hash = window.location.hash;
+  if (hash === '#register') { showAuth('register'); return; }
+  if (hash === '#login')    { showAuth('login');    return; }
+  if (hash === '#dashboard') {
+    if (S.token) { autoLogin(); return; }
+    showAuth('login'); return;
+  }
+
+  // Auto login if token exists
+  if (S.token) { autoLogin(); }
+});
+
+function cnt(el, t, sfx='', ms=1800) {
+  if (!el) return;
+  let v=0; const step=t/(ms/16);
+  const i=setInterval(()=>{ v=Math.min(v+step,t); el.textContent=Math.floor(v)+sfx; if(v>=t)clearInterval(i); },16);
+}
+
+// ══════════════════════════════════════
+// PAGE NAVIGATION
+// ══════════════════════════════════════
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+
+function showAuth(tab) {
+  showPage('pg-auth');
+  switchTab(tab);
+}
+
+function switchTab(tab) {
+  document.getElementById('form-register').classList.toggle('on', tab==='register');
+  document.getElementById('form-login').classList.toggle('on',    tab==='login');
+  document.getElementById('tab-reg').classList.toggle('on',       tab==='register');
+  document.getElementById('tab-log').classList.toggle('on',       tab==='login');
+}
+
+// ══════════════════════════════════════
+// DASHBOARD TABS
+// ══════════════════════════════════════
+function showTab(name) {
+  document.querySelectorAll('.dm-panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.dm-tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  document.getElementById('tab-'+name)?.classList.add('on');
+  const tabs = ['overview','bot','extension','prefs','apps'];
+  const idx  = tabs.indexOf(name);
+  if (idx >= 0) {
+    document.querySelectorAll('.dm-tab')[idx]?.classList.add('on');
+    document.querySelectorAll('.ni')[idx]?.classList.add('on');
+  }
+}
+
+// ══════════════════════════════════════
+// REGISTER
+// ══════════════════════════════════════
+async function register() {
+  const name  = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass  = document.getElementById('reg-pass').value;
+  const errEl = document.getElementById('reg-err');
+  const okEl  = document.getElementById('reg-ok');
+  errEl.classList.remove('on'); okEl.classList.remove('on');
+
+  if (!name)  return showMsg('reg-err', 'Please enter your name');
+  if (!email) return showMsg('reg-err', 'Please enter your email');
+  if (!pass)  return showMsg('reg-err', 'Please enter a password');
+  if (pass.length < 6) return showMsg('reg-err', 'Password must be at least 6 characters');
+
+  try {
+    const res  = await apiFetch('/register', 'POST', { name, email, password: pass });
+    if (res.error) return showMsg('reg-err', res.error);
+    S.token = res.token; S.user = res.user;
+    localStorage.setItem('ap_token', S.token);
+    showMsg('reg-ok', '✅ Account created! Loading dashboard...');
+    setTimeout(()=>{ initDash(); showPage('pg-dash'); startPoll(); }, 800);
+  } catch {
+    showMsg('reg-err', 'Cannot reach server. Make sure server.js is running.');
+  }
+}
+
+// ══════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════
+async function login() {
+  const email = document.getElementById('log-email').value.trim();
+  const pass  = document.getElementById('log-pass').value;
+  const errEl = document.getElementById('log-err');
+  errEl.classList.remove('on');
+
+  if (!email || !pass) return showMsg('log-err', 'Enter email and password');
+
+  try {
+    const res = await apiFetch('/login', 'POST', { email, password: pass });
+    if (res.error) return showMsg('log-err', res.error);
+    S.token = res.token; S.user = res.user;
+    localStorage.setItem('ap_token', S.token);
+    initDash(); showPage('pg-dash'); startPoll();
+  } catch {
+    showMsg('log-err', 'Cannot reach server. Make sure server.js is running.');
+  }
+}
+
+// Enter key for login
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const activePage = document.querySelector('.page.on')?.id;
+  if (activePage === 'pg-auth') {
+    const activeForm = document.querySelector('.auth-form.on')?.id;
+    if (activeForm === 'form-login')    login();
+    if (activeForm === 'form-register') register();
+  }
+});
+
+// Auto login from stored token
+async function autoLogin() {
+  try {
+    const res = await apiFetch('/me');
+    if (res.error) { localStorage.removeItem('ap_token'); return; }
+    S.user = res.user;
+    initDash(); showPage('pg-dash'); startPoll();
+  } catch { localStorage.removeItem('ap_token'); }
+}
+
+// ══════════════════════════════════════
+// LOGOUT
+// ══════════════════════════════════════
+function logout() {
+  clearInterval(S.pollTimer);
+  S.token = null; S.user = null;
+  localStorage.removeItem('ap_token');
+  showPage('pg-land');
+}
+
+// ══════════════════════════════════════
+// INIT DASHBOARD
+// ══════════════════════════════════════
+function initDash() {
+  const u = S.user;
+  if (!u) return;
+  document.getElementById('sb-av').textContent  = (u.name||'U').charAt(0).toUpperCase();
+  document.getElementById('sb-nm').textContent  = u.name;
+  document.getElementById('sb-pl').textContent  = u.plan==='pro'?'⚡ Pro Plan':u.plan==='elite'?'🔥 Elite':'Free Plan';
+  document.getElementById('ss4').textContent    = `/ ${u.dailyLimit||20} limit`;
+  document.getElementById('pm-count').textContent = `0 / ${u.dailyLimit||20}`;
+  if (u.plan !== 'free') document.getElementById('up-banner').style.display = 'none';
+  checkSetup();
+  // Prefill preferences
+  prefillPrefs(u);
+}
+
+function checkSetup() {
+  const u = S.user;
+  if (!u) return;
+  const missing = [];
+  if (!u.hasNaukri) missing.push('Save Naukri login in Preferences');
+  const alertEl = document.getElementById('setup-alert');
+  if (missing.length) {
+    document.getElementById('setup-todo').textContent = missing.join(' · ');
+    alertEl.style.display = 'block';
+  } else {
+    alertEl.style.display = 'none';
+  }
+}
+
+// Prefill saved preferences into form
+function prefillPrefs(u) {
+  if (!u) return;
+  const set = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined && val !== null) el.value = val; };
+
+  set('p-email',    u.naukriEmail || '');
+  set('p-exp-yrs',  u.totalExpYears || 2);
+  set('p-limit',    u.dailyLimit   || 20);
+  set('p-cur-ctc',  u.currentCTC   || '');
+  set('p-exp-ctc',  u.expectedCTC  || '');
+  set('p-notice',   u.noticePeriod !== undefined ? u.noticePeriod : 30);
+  set('p-work-mode',u.workMode     || 'any');
+  set('p-phone',    u.phone        || '');
+  set('p-age',      u.age          || '');
+  set('p-gender',   u.gender       || 'male');
+  set('p-edu',      u.education    || 'btech');
+  set('p-relocate', u.relocate     || 'yes');
+  set('p-skills',   u.skills       || '');
+
+  const sk = u.skillExp || {};
+  const skills = ['selenium','cypress','java','python','js','react','angular','node','sql','aws','azure','devops','api','manual','agile','jira'];
+  skills.forEach(s => set('sk-'+s, sk[s] || ''));
+
+  // Pre-select job title tags
+  if (u.jobTitles?.length) {
+    document.querySelectorAll('#p-jobs .tag').forEach(t => {
+      t.classList.toggle('on', u.jobTitles.includes(t.textContent.trim()));
+    });
+  }
+  // Pre-select location tags
+  if (u.locations?.length) {
+    document.querySelectorAll('#p-locs .tag').forEach(t => {
+      t.classList.toggle('on', u.locations.includes(t.textContent.trim()));
+    });
+  }
+}
+
+// ══════════════════════════════════════
+// POLL SERVER for live updates
+// ══════════════════════════════════════
+function startPoll() {
+  pollOnce();
+  S.pollTimer = setInterval(pollOnce, 3000);
+}
+
+async function pollOnce() {
+  try {
+    const data = await apiFetch('/status');
+    if (data.error) return;
+    S.apps  = data.applications || [];
+    S.user  = { ...S.user, dailyLimit: data.dailyLimit, plan: data.plan };
+    updateStats(data);
+    renderJobs();
+    renderLogs(data.logs);
+    checkSetup();
+  } catch {}
+}
+
+function updateStats(data) {
+  sv('sv1', data.totalApplied||0);
+  sv('sv2', data.responses||0);
+  sv('sv3', data.interviews||0);
+  sv('sv4', data.todayCount||0);
+  const rate = data.totalApplied ? Math.round((data.responses/data.totalApplied)*100) : 0;
+  document.getElementById('ss-rate').textContent    = rate+'%';
+  document.getElementById('ss1').textContent        = `+${data.todayCount||0} today`;
+  document.getElementById('ss3').textContent        = (data.interviews||0)>0?'🎉 Congrats!':'Keep going!';
+  document.getElementById('apps-badge').textContent = data.totalApplied||0;
+  document.getElementById('apps-count').textContent = `(${data.totalApplied||0})`;
+  document.getElementById('apps-count2').textContent= `(${data.totalApplied||0})`;
+  const limit = data.dailyLimit||20;
+  const pct   = Math.min(Math.round(((data.todayCount||0)/limit)*100),100);
+  document.getElementById('dpb').style.width            = pct+'%';
+  document.getElementById('bt-prog-bar').style.width    = pct+'%';
+  document.getElementById('pm-count').textContent       = `${data.todayCount||0} / ${limit}`;
+  document.getElementById('bt-prog-label').textContent  = `${data.todayCount||0} applications today`;
+  document.getElementById('bt-prog-pct').textContent    = pct+'%';
+  document.getElementById('ss4').textContent            = `/ ${limit} limit`;
+  if (S.apps.length>0) {
+    const last = S.apps[0];
+    document.getElementById('pm-status').textContent   = `Last: ${last.title||last.job_title} @ ${last.company}`;
+    document.getElementById('bt-title').innerHTML      = `Bot Status: <span style="color:var(--gr)">Active</span>`;
+    document.getElementById('bt-desc').textContent     = `Applied ${data.todayCount} jobs today`;
+  }
+}
+
+function sv(id,val) {
+  const el=document.getElementById(id);
+  if (!el) return;
+  if (parseInt(el.textContent)===val) return;
+  el.style.transform='scale(1.18)';
+  el.textContent=val;
+  setTimeout(()=>el.style.transform='',280);
+}
+
+// ══════════════════════════════════════
+// RENDER JOBS TABLE
+// ══════════════════════════════════════
+function renderJobs() {
+  if (!S.apps.length) return;
+  const html = buildRows(S.apps.slice(0,50));
+  document.getElementById('jobs-body').innerHTML     = html || emptyRow();
+  document.getElementById('all-jobs-body').innerHTML = html || emptyRow();
+}
+
+function buildRows(apps) {
+  return apps.map((j,i)=>{
+    const bc = {applied:'b-ap',viewed:'b-vi',interview:'b-in',rejected:'b-rj',skipped:'b-rj'}[j.status]||'b-ap';
+    const bt = {applied:'✓ Applied',viewed:'👁 Viewed',interview:'📅 Interview',rejected:'✗ Rejected',skipped:'⏭ Skipped'}[j.status]||'✓ Applied';
+    const title   = j.title   || j.job_title || '';
+    const time    = j.appliedAt||j.applied_at ? new Date(j.appliedAt||j.applied_at).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : '–';
+    return `<div class="jtr" style="animation-delay:${i*.03}s">
+      <div><div class="jt-ttl">${title}</div><div class="jt-co">${j.company||''}</div></div>
+      <div class="jt-loc">${j.location||''}</div>
+      <div class="jt-plt">${j.platform||'Naukri'}</div>
+      <div class="jt-time">${time}</div>
+      <div><span class="bdg ${bc}">${bt}</span></div>
+    </div>`;
+  }).join('');
+}
+
+function emptyRow() {
+  return '<div class="empty-row"><div class="ei">📋</div>No applications yet.</div>';
+}
+
+// ══════════════════════════════════════
+// RENDER LOGS
+// ══════════════════════════════════════
+function renderLogs(logs) {
+  if (!logs?.length) return;
+  const term = document.getElementById('log-terminal');
+  term.innerHTML = logs.slice(-30).map(l=>`
+    <div class="tl ${l.type}">
+      <span class="ts">${(l.time||l.created_at||'').slice(11,19)}</span>
+      <span class="tm">${l.text}</span>
+    </div>`).join('');
+  term.scrollTop = term.scrollHeight;
+
+  // Update bot status message
+  const last = logs[logs.length-1];
+  if (last) {
+    const sm = document.getElementById('bot-status-msg');
+    sm.className = 'alert ' + (last.type==='ok'?'alert-ok':last.type==='err'?'alert-err':'alert-info');
+    sm.textContent = last.text;
+  }
+}
+
+// ══════════════════════════════════════
+// SAVE PREFERENCES
+// ══════════════════════════════════════
+async function savePrefs() {
+  const okEl  = document.getElementById('pref-ok');
+  const errEl = document.getElementById('pref-err');
+  okEl.style.display = errEl.style.display = 'none';
+
+  const email = document.getElementById('p-email').value.trim();
+  const pass  = document.getElementById('p-pass').value;
+  if (!email || !pass) {
+    errEl.textContent = 'Please enter your Naukri email and password.';
+    return errEl.style.display = 'block';
+  }
+
+  const g  = id => { const el=document.getElementById(id); return el?el.value:''; };
+  const gn = id => parseFloat(g(id))||0;
+  const jobTitles = [...document.querySelectorAll('#p-jobs .tag.on')].map(t=>t.textContent.trim());
+  const locations = [...document.querySelectorAll('#p-locs .tag.on')].map(t=>t.textContent.trim());
+
+  try {
+    const res = await apiFetch('/preferences', 'POST', {
+      naukriEmail:   email,
+      naukriPass:    pass,
+      jobTitles:     jobTitles.length ? jobTitles : ['QA Automation Engineer'],
+      locations:     locations.length ? locations : ['Hyderabad'],
+      dailyLimit:    g('p-limit'),
+      totalExpYears: gn('p-exp-yrs'),
+      currentCTC:    gn('p-cur-ctc'),
+      expectedCTC:   gn('p-exp-ctc'),
+      noticePeriod:  parseInt(g('p-notice')),
+      workMode:      g('p-work-mode'),
+      phone:         g('p-phone'),
+      age:           parseInt(g('p-age'))||26,
+      gender:        g('p-gender'),
+      education:     g('p-edu'),
+      relocate:      g('p-relocate'),
+      skills:        g('p-skills'),
+      skillExp: {
+        selenium: gn('sk-selenium'), cypress:  gn('sk-cypress'),
+        java:     gn('sk-java'),     python:   gn('sk-python'),
+        javascript: gn('sk-js'),     react:    gn('sk-react'),
+        angular:  gn('sk-angular'),  node:     gn('sk-node'),
+        sql:      gn('sk-sql'),      aws:      gn('sk-aws'),
+        azure:    gn('sk-azure'),    devops:   gn('sk-devops'),
+        api:      gn('sk-api'),      manual:   gn('sk-manual'),
+        agile:    gn('sk-agile'),    jira:     gn('sk-jira'),
+      },
+    });
+    if (res.success) {
+      okEl.style.display = 'block';
+      S.user = { ...S.user, ...res.user, hasNaukri: true };
+      checkSetup();
+    } else {
+      errEl.textContent = res.error;
+      errEl.style.display = 'block';
+    }
+  } catch {
+    errEl.textContent = 'Save failed — is server.js running?';
+    errEl.style.display = 'block';
+  }
+}
+
+function tt(el) { el.classList.toggle('on'); }
+
+// ══════════════════════════════════════
+// EXTENSION INSTALL
+// ══════════════════════════════════════
+function installExt() {
+  // Replace with your Chrome Web Store URL when published
+  // For now opens instructions
+  showTab('extension');
+  alert('Extension is in Developer Mode.\n\nTo install:\n1. Chrome → chrome://extensions\n2. Enable Developer mode\n3. Click "Load unpacked"\n4. Select the extension/ folder');
+}
+
+// ══════════════════════════════════════
+// RAZORPAY PAYMENT
+// ══════════════════════════════════════
+const planInfo = {
+  pro:   { name:'Pro Plan',   price:'₹499/mo', desc:'50 apps/day · Naukri + LinkedIn' },
+  elite: { name:'Elite Plan', price:'₹999/mo', desc:'Unlimited · All platforms' },
+};
+
+function openPay(plan) {
+  if (!S.token) { showAuth('register'); return; }
+  S.selPlan = plan;
+  document.getElementById('mp-nm').textContent = planInfo[plan].name;
+  document.getElementById('mp-pr').textContent = planInfo[plan].price;
+  document.getElementById('pay-modal').classList.add('on');
+}
+
+function closePay() { document.getElementById('pay-modal').classList.remove('on'); }
+
+async function payNow() {
+  try {
+    const order = await apiFetch('/payment/create-order','POST',{plan:S.selPlan});
+    if (order.error) throw new Error(order.error);
+    const options = {
+      key:         order.keyId,
+      amount:      order.amount,
+      currency:    order.currency,
+      name:        'ApplyPilot',
+      description: planInfo[S.selPlan].name,
+      order_id:    order.orderId,
+      prefill:     { name:S.user?.name||'', email:S.user?.email||'' },
+      theme:       { color:'#b5ff47' },
+      handler: async (resp) => {
+        const v = await apiFetch('/payment/verify','POST',{
+          orderId:   order.orderId,
+          paymentId: resp.razorpay_payment_id,
+          signature: resp.razorpay_signature,
+          plan:      S.selPlan,
+        });
+        if (v.success) {
+          closePay();
+          S.plan = S.selPlan;
+          document.getElementById('sb-pl').textContent = planInfo[S.selPlan].name;
+          document.getElementById('up-banner').style.display = 'none';
+          alert('🎉 Payment successful! Your plan is now active.');
+        }
+      },
+    };
+    new Razorpay(options).open();
+    closePay();
+  } catch(err) {
+    alert('Payment error: '+err.message);
+  }
+}
+
+// ══════════════════════════════════════
+// API HELPER
+// ══════════════════════════════════════
+async function apiFetch(endpoint, method='GET', body=null) {
+  const opts = {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(S.token ? { Authorization: `Bearer ${S.token}` } : {}),
+    },
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(API + endpoint, opts);
+  return res.json();
+}
+
+// ══════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════
+function showMsg(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = text;
+  el.classList.add('on');
+}
+</script>
 </body>
 </html>

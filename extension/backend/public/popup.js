@@ -3,8 +3,7 @@
 // ============================================================
 
 const API_BASE = 'applypilot-ext-production.up.railway.app';
-// For local testing:
-//  const API_BASE = 'http://localhost:3000/api';
+// For local testing: const API_BASE = 'http://localhost:3000/api';
 
 const WEBSITE = 'https://manideepvutkuri-applypilot-ext.vercel.app/';
 
@@ -51,7 +50,7 @@ btnLogin.onclick = async () => {
   btnLogin.disabled = true;
 
   try {
-    const res  = await fetch("https://applypilot-ext-production.up.railway.app/api/login", {
+    const res  = await fetch(`${API_BASE}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password: pass }),
@@ -152,7 +151,7 @@ async function loadStatus() {
   if (!stored.token) return;
 
   try {
-    const res  = await fetch('https://applypilot-ext-production.up.railway.app/api/status', {
+    const res  = await fetch(`${API_BASE}/status`, {
       headers: { Authorization: `Bearer ${stored.token}` }
     });
     const data = await res.json();

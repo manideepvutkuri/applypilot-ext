@@ -3,10 +3,9 @@
 // ============================================================
 
 const API_BASE = 'applypilot-ext-production.up.railway.app';
-// For local testing:
-//  const API_BASE = 'applypilot-ext-production.up.railway.app';
+// For local testing: const API_BASE = 'http://localhost:3000/api';
 
-const WEBSITE = 'applypilot-ext-production.up.railway.app';
+const WEBSITE = 'https://manideepvutkuri-applypilot-ext.vercel.app/';
 
 // ── DOM refs ──────────────────────────────────────────────────
 const stateLogin = document.getElementById('state-login');
@@ -36,51 +35,6 @@ window.onload = async () => {
   }
 };
 
-
-
-
-document.addEventListener("DOMContentLoaded", () => {
-
-  console.log("JS Loaded ✅");
-
-  const btn = document.getElementById("registerBtn");
-
-  if (!btn) {
-    console.error("❌ registerBtn NOT FOUND");
-    return;
-  }
-
-  console.log("✅ Button found");
-
-  // btn.addEventListener("click", () => {
-  //   alert("CLICK WORKING ✅");
-  // });
-btn.addEventListener("click", async () => {
-
-  const name = document.getElementById("regName").value;
-  const email = document.getElementById("regEmail").value;
-  const password = document.getElementById("regPassword").value;
-
-  if (!name || !email || !password) {
-    alert("Fill all fields");
-    return;
-  }
-
-  const res = await fetch("https://applypilot-ext-production.up.railway.app/api/register", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ name, email, password })
-  });
-
-  const data = await res.json();
-  console.log(data);
-
-  alert("DONE");
-});
-});
-
 // ── Login ─────────────────────────────────────────────────────
 btnLogin.onclick = async () => {
   const email = inpEmail.value.trim();
@@ -96,7 +50,7 @@ btnLogin.onclick = async () => {
   btnLogin.disabled = true;
 
   try {
-    const res  = await fetch("https://applypilot-ext-production.up.railway.app/api/login", {
+    const res  = await fetch(`${API_BASE}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password: pass }),
@@ -132,59 +86,8 @@ btnLogin.onclick = async () => {
 // Enter key to login
 inpPass.onkeydown = (e) => { if (e.key === 'Enter') btnLogin.click(); };
 
-
-
-const API = "https://applypilot-ext-production.up.railway.app";
-
-document.getElementById("btn-register").onclick = async () => {
-  const name = document.getElementById("regName").value;
-  const email = document.getElementById("regEmail").value;
-  const password = document.getElementById("regPassword").value;
-
-  if (!name || !email || !password) {
-    alert("All fields required");
-    return;
-  }
-
-  try {
-    const res = await fetch(`${API}/api/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ name, email, password })
-    });
-
-    const data = await res.json();
-
-    if (data.success) {
-      alert("Registered successfully ✅");
-
-      // 🔥 IMPORTANT: auto login
-      localStorage.setItem("token", data.token);
-
-      // redirect to login/dashboard
-      window.location.href = "/";
-    } else {
-      alert(data.error);
-    }
-
-  } catch (err) {
-    console.error(err);
-    alert("Server error");
-  }
-};
 // Register — open website
-//  btnReg.onclick = () => chrome.tabs.create({ url: `${WEBSITE}/#register` });
-// btnReg.onclick = () => window.open(`${WEBSITE}/#register`, '_blank');
-
-btnReg.onclick = () => {
-  if (typeof chrome !== "undefined" && chrome.tabs) {
-    chrome.tabs.create({ url: "https://applypilot-ext-production.up.railway.app/#register" });
-  } else {
-    window.location.href = "https://applypilot-ext-production.up.railway.app/#register";
-  }
-};
+btnReg.onclick = () => chrome.tabs.create({ url: `${WEBSITE}/#register` });
 
 // Sign out
 btnSignout.onclick = async () => {
@@ -248,7 +151,7 @@ async function loadStatus() {
   if (!stored.token) return;
 
   try {
-    const res  = await fetch('https://applypilot-ext-production.up.railway.app/api/status', {
+    const res  = await fetch(`${API_BASE}/status`, {
       headers: { Authorization: `Bearer ${stored.token}` }
     });
     const data = await res.json();
